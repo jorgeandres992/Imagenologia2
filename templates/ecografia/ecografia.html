@@ -1,0 +1,333 @@
+{% extends 'plantilla_menu.html' %}
+
+{% block menu %}
+<li>
+	<a href="/menu"><i class="fa fa-fw fa-dashboard"></i> Inicio</a>
+</li>
+<li  class="active">
+	<a href="javascript:;" data-toggle="collapse" data-target="#eco"><i class="fa fa-fw fa-suitcase"></i> Ecografia <i class="fa fa-fw fa-caret-down"></i></a>
+	<ul id="eco" class="collapse">
+		<li>
+			<a href="/ecografia"><i class="fa fa-fw fa-edit"></i>  Registros</a>
+		</li>
+		<li>
+			<a href="/consulta_eco"><i class="fa fa-fw fa-search"></i>  Consulta de registros</a>
+		</li>
+		<li>
+			<a href="/especialista"><i class="fa fa-fw fa-print"></i>  Reportes Por Especialista</a>
+		</li>
+	</ul>
+</li>
+<li>
+	<a href="javascript:;" data-toggle="collapse" data-target="#rad"><i class="fa fa-fw fa-suitcase"></i> Radiologia <i class="fa fa-fw fa-caret-down"></i></a>
+	<ul id="rad" class="collapse">
+		<li>
+			<a href="/radiologia"><i class="fa fa-fw fa-edit"></i>  Registros</a>
+		</li>
+		<li>
+			<a href="/consulta_rad"><i class="fa fa-fw fa-desktop"></i>  Consulta de registros</a>
+		</li>
+        <li>
+            <a href="/inventario"><i class="fa fa-fw fa-table"></i> Inventario</a>
+        </li>
+		<li>
+			<a href="/lectura"><i class="fa fa-fw fa-search"></i>  Lectura</a>
+		</li>
+	</ul>
+</li>
+<li>
+	<a href="javascript:;" data-toggle="collapse" data-target="#demo"><i class="fa fa-fw fa-bar-chart"></i> Informes <i class="fa fa-fw fa-caret-down"></i></a>
+	<ul id="demo" class="collapse">
+		<li>
+			<a href="/infoecografia"><i class="fa fa-fw fa-print"></i>  Informes Ecografia</a>
+		</li>
+		<li>
+			<a href="/inforadiologia"><i class="fa fa-fw fa-print"></i>  Informe Radiologia</a>
+		</li>
+	</ul>
+</li>
+<li>
+	<a href="javascript:;" data-toggle="collapse" data-target="#admin"><i class="fa fa-fw fa-cogs"></i> Administración <i class="fa fa-fw fa-caret-down"></i></a>
+	<ul id="admin" class="collapse">
+		<li>
+			<a href="/usuarios"><i class="fa fa-fw fa-user"></i>  Crear Usuarios</a>
+		</li>
+	</ul>
+</li>
+
+{% endblock %}
+
+{% block content %}
+<div class="container initial">
+	<!-- Modal -->
+	<div id="nuevoModal" class="modal fade" role="dialog">
+		<div class="modal-dialog">
+			<!-- Modal content-->
+			<div class="modal-content">
+				<form class="form-horizontal" method="post" id="formguardar" action="guardarpersona" >
+					{% csrf_token %}
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal">&times;</button>
+						<div class="col-sm-12 text-box">
+							<h2 class="modal-title">PACIENTE NUEVO</h2>
+						</div>
+					</div>
+					<div class="modal-body">
+						<div class="row">
+							<div class="col-sm-12">
+								<div class="form-group">
+									<div class="col-xs-3">
+										<label class="control-label">Nombres:</label>
+									</div>
+									<div class="col-xs-9">
+										<input class="form-control" name="nombre" type="varchar" required />
+									</div>
+								</div>
+								<div class="form-group">
+									<div class="col-xs-3">
+										<label class="control-label">Apellidos:</label>
+									</div>
+									<div class="col-xs-9">
+										<input class="form-control" name="apellido" type="text" placeholder="" required />
+									</div>
+								</div>
+								<div class="form-group">
+									<div class="col-xs-3">
+										<label class="control-label">Tipo de Id:</label>
+									</div>
+									<div class="col-xs-4">
+										<select class="form-control" name="tipoid" required>
+											<option value="">Seleccione</option>
+											{% for t in tipoid %}
+												<option value="{{ t.id }}">{{ t.tipoid }}</option>
+											{% endfor %}
+										</select>
+									</div>
+								</div>
+								<div class="form-group">
+									<div class="col-xs-3">
+										<label class="control-label">Número de Id:</label>
+									</div>
+									<div class="col-xs-9">
+										<input class="form-control" name="identificacion" id = "identificacion" type="text" placeholder="" required />
+									</div>
+								</div>
+								<div class="form-group">
+									<div class="col-xs-3">
+										<label class="control-label">Tipo paciente:</label>
+									</div>
+									<div class="col-xs-9">
+										<select class="form-control" name="tipopaciente" required>
+											<option value="">Seleccione</option>
+											{% for p in tipopaciente %}
+												<option value="{{ p.id }}">{{ p.tipopaciente }}</option>
+											{% endfor %}
+										</select>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button id="find2" type="submit" class="btn btn-default">Guardar</button>
+					</div>
+				</form>	
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-sm-12 col-lg-12">
+			<h1 class="page-header">
+				REGISTROS 
+				<small>ECOGRAFIA</small>
+			</h1>
+			<ol class="breadcrumb">
+				<li>
+					<i class="fa fa-dashboard"></i>  <a href="/menu">Inicio</a>
+				</li>
+				<li>
+					<i class="fa fa-folder-open"></i> Ecografia
+				</li>
+				<li class="active">
+					<i class="fa fa-file"></i> Registros
+				</li>
+			</ol>
+		</div>
+		<div class="col-sm-12">
+			<div class="row">
+				<form class="form-horizontal" method="post" action="guardarecografia">
+					{% csrf_token %}				
+					<div class="col-sm-12 row form-group">
+						<div class="col-sm-1">
+							<label>Número de Id:</label>
+						</div>
+                        <div class="col-sm-3">
+                            <div class="input-group">
+                              <input name="numeroid" id="numid" class="form-control" type="varchar" required />
+                              <span class="input-group-btn">
+                                <button id="find" class="btn btn-default" type="button">Buscar</button>
+                              </span>
+                            </div>
+                        </div>
+						<div class="col-sm-1">
+							<a href="#" type="button" data-toggle="modal" data-target="#nuevoModal">
+								<span class="glyphicon glyphicon-floppy-open" aria-hidden="true"></span> Nuevo 
+							</a>
+						</div>									
+						<div class="col-sm-7 usuario">
+							<h3><div id="nombre" ></div> <small><div id="tpaciente"></div></small></h3>
+						</div>
+					</div>
+					<div class="col-sm-12 form-group seccion">
+						<div class="row">
+							<div class="col-sm-12">
+								<div class="col-sm-12 form-group">
+									<div class="col-sm-1">
+										<label>Fecha:</label>
+									</div>
+									<div class="col-sm-3">
+										<input class="form-control" id="fecha" name="fecha" type="text" />
+									</div>
+									<div class="col-sm-1">
+										<label>Hora:</label>
+									</div>
+									<div class="col-sm-2">
+										<input class="form-control" name="hora" id="hora" type="text" />
+									</div>
+                                    <div class="col-sm-1">
+										<label>Área:</label>
+									</div>
+									<div class="col-sm-4">
+										<select class="form-control" id="area" name="area" required>
+                                            <option value="">Seleccione</option>
+                                            {% for area in area %}
+                                            <option value="{{ area.id }}">{{ area.area }}</option>
+                                            {% endfor %}
+                                        </select>
+									</div>
+								</div>
+								<div class="col-sm-12 form-group">
+									<div class="col-sm-1">
+										<label>Entidad:</label>
+									</div>
+									<div class="col-md-11">
+										<select class="form-control" name="entidad" required >
+											<option value="">Seleccione</option>
+											{% for e in entidad %}
+											<option value="{{ e.id }}">{{ e.entidad }}</option>
+											{% endfor %}
+										</select>
+									</div>
+								</div>
+                                <div class="col-sm-12 form-group">
+									<div class="col-sm-1">
+										<label>Servicio:</label>
+									</div>
+									<div class="col-sm-2">
+                                        <div class="input-group">
+                                            <input class="form-control" id="codigo" name="codigo" />
+                                            <span class="input-group-btn">
+                                                <button id="codservicioeco" class="btn btn-default" type="button">Buscar</button>
+                                            </span>
+                                        </div>
+									</div>
+									<div class="col-sm-9">
+										<select class="form-control" id="servicio" name="servicio" required>
+											<option value="">Seleccione</option>
+											{% for s in servicio %}
+											<option value="{{ s.id }}">{{ s.servicio }}</option>
+											{% endfor %}
+										</select>
+									</div>
+								</div>
+								<div  class="col-sm-12 form-group">
+									<div class="col-sm-1">
+										<label>Documento interno:</label>
+									</div>
+									<div class="col-sm-3">
+										<select class="form-control" id="docint" name="docinterno" required>
+											<option value="">Seleccione</option>
+											{% for doc in docint %}
+											<option value="{{ doc.id }}">{{ doc.docint }}</option>
+											{% endfor %}
+										</select>
+									</div>
+									<div class="col-sm-1">
+										<label>Número:</label>
+									</div>
+									<div class="col-sm-2">
+										<input class="form-control" name="numinterno" type="text" placeholder="" required />
+									</div>
+									<div class="col-sm-1">
+										<label>Profesional:</label>
+									</div>
+									<div class="col-md-4">
+										<select class="form-control" name="profesional" required>
+											<option value="">Seleccione</option>
+                                            {% for p in profesional %}
+											<option value="{{ p.id }}">{{ p.profesional }}</option>
+											{% endfor %}
+										</select>
+									</div>
+                                </div>
+                                <div class="col-sm-12 form-group">
+                                    <div class="col-xs-1">
+                                        <label>Usuario Actual:</label>
+                                    </div>
+                                    <div class="col-xs-3">
+                                        <input class="form-control" value="{{ user.first_name }} {{ user.last_name }}" disabled />
+                                    </div>
+                                    <div class="col-sm-1">
+                                        <input name="usuario" value="{{ user.id }}" style="visibility:hidden" />
+                                    </div>
+								</div>
+								<div class="col-xs-12">
+									<button class="btn btn-default" type="submit">Guardar</button>
+								</div>					
+							</div>
+						</div>
+					</div>
+				</form>		
+			</div>
+		</div>
+	</div>
+</div>
+<div class="container-fluid">
+	<div class="col-md-12">
+		<div class="table-responsive">
+			<table class="table table-bordered table-hover">
+				<thead>
+					<tr>
+						<th>Nombre</th>
+						<th>N° de identificación</th>
+						<th>Hora</th>
+						<th>Servicio</th>
+						<th>Area</th>
+						<th>Entidad</th>
+					</tr>
+				</thead>
+				<tbody>
+                {% for r in registros %}
+					<tr>
+						<td>{{ r.serviciopacienteeco.persona.nombre }} {{ r.serviciopacienteeco.persona.apellido }}</td>
+						<td>{{ r.serviciopacienteeco.persona.identificacion }}</td>
+                        <td>{{ r.hora }}</td>
+						<td>{{ r.serviciopacienteeco.servicioeco.servicio }}</td>
+						<td>{{ r.area.area }}</td>
+						<td>{{ r.entidad.entidad }}</td>
+					</tr>
+                {% endfor %}
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>
+<div class="margen-froter"></div>
+{% endblock %}
+
+{% block scripts%}
+    <script src="/static/js/funciones.js"></script>
+{% endblock %}

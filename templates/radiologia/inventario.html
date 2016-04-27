@@ -1,0 +1,164 @@
+{% extends 'plantilla_menu.html' %}
+
+{% block menu %}
+<li>
+	<a href="/menu"><i class="fa fa-fw fa-dashboard"></i> Inicio</a>
+</li>
+<li>
+	<a href="javascript:;" data-toggle="collapse" data-target="#eco"><i class="fa fa-fw fa-suitcase"></i> Ecografia <i class="fa fa-fw fa-caret-down"></i></a>
+	<ul id="eco" class="collapse">
+		<li>
+			<a href="/ecografia"><i class="fa fa-fw fa-edit"></i>  Registros</a>
+		</li>
+		<li>
+			<a href="/consulta_eco"><i class="fa fa-fw fa-search"></i>  Consulta de registros</a>
+		</li>
+		<li>
+			<a href="/especialista"><i class="fa fa-fw fa-print"></i>  Reportes Por Especialista</a>
+		</li>
+	</ul>
+</li>
+<li class="active">
+	<a href="javascript:;" data-toggle="collapse" data-target="#rad"><i class="fa fa-fw fa-suitcase"></i> Radiologia <i class="fa fa-fw fa-caret-down"></i></a>
+	<ul id="rad" class="collapse">
+		<li>
+			<a href="/radiologia"><i class="fa fa-fw fa-edit"></i>  Registros</a>
+		</li>
+		<li>
+			<a href="/consulta_rad"><i class="fa fa-fw fa-desktop"></i>  Consulta de registros</a>
+		</li>
+        <li>
+            <a href="/inventario"><i class="fa fa-fw fa-table"></i> Inventario</a>
+        </li>
+		<li>
+			<a href="/lectura"><i class="fa fa-fw fa-search"></i>  Lectura</a>
+		</li>
+	</ul>
+</li>
+<li>
+	<a href="javascript:;" data-toggle="collapse" data-target="#demo"><i class="fa fa-fw fa-bar-chart"></i> Informes <i class="fa fa-fw fa-caret-down"></i></a>
+	<ul id="demo" class="collapse">
+		<li>
+			<a href="/infoecografia"><i class="fa fa-fw fa-print"></i>  Informes Ecografia</a>
+		</li>
+		<li>
+			<a href="/inforadiologia"><i class="fa fa-fw fa-print"></i>  Informe Radiologia</a>
+		</li>
+	</ul>
+</li>
+<li>
+	<a href="javascript:;" data-toggle="collapse" data-target="#admin"><i class="fa fa-fw fa-cogs"></i> Administración <i class="fa fa-fw fa-caret-down"></i></a>
+	<ul id="admin" class="collapse">
+		<li>
+			<a href="/usuarios"><i class="fa fa-fw fa-user"></i>  Crear Usuarios</a>
+		</li>
+	</ul>
+</li>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-lg-12">
+			<h1 class="page-header">
+				INVENTARIO
+				<small>RADIOLOGIA</small>
+			</h1>
+			<ol class="breadcrumb">
+				<li>
+					<i class="fa fa-dashboard"></i>  <a href="/menu">Inicio</a>
+				</li>
+				<li>
+					<i class="fa fa-folder-open"></i> Radiologia
+				</li>
+				<li class="active">
+					<i class="fa fa-list-alt"></i> Inventario
+				</li>
+			</ol>
+		</div>
+	</div>
+</div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="col-sm-6">
+                <form class="form-horizontal" method="post" action="guardarinventario">
+		        {% csrf_token %}
+                    <div class="col-sm-12 form-group">
+					    <div class="col-sm-4">
+				            <label>Fecha:</label>
+                        </div>
+				        <div class="col-sm-8">
+				            <input class="form-control" id="fecha" name="fechaentrada" type="text" required />
+				        </div>
+			        </div>
+			        <div class="col-sm-12 form-group">
+				        <div class="col-sm-4">
+				            <label>Tipo de placa:</label>
+				        </div>
+				        <div class="col-sm-8">
+                            <select class="form-control" name="tipoconsumible" required >
+                                <option value="">Seleccione</option>
+                                {% for placa in placas %}
+                                <option value="{{ placa.id }}">{{ placa.consumible }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 form-group">
+                        <div class="col-sm-4">
+                            <label>Cantidad:</label>
+                        </div>
+                        <div class="col-sm-6">
+                            <input name="cantidad" class="form-control" type="text" required />
+                        </div>
+                    </div>
+                    <div class="col-sm-12 form-group">
+                        <div class="col-sm-4">
+                            <label>Usuario actual:</label>
+                        </div>
+                        <div class="col-sm-6">
+                            <input class="form-control" value="{{ user.first_name }} {{ user.last_name }}" disabled />
+                        </div>
+                        <div class="col-sm-2">
+                            <input name="usuario" class="form-control" value="{{ user.id }}" style="visibility:hidden" />
+                        </div>
+                    </div>
+                    <div class="col-xs-12">
+                        <button class="btn btn-default" type="submit">Guardar</button>
+                    </div>
+			    </form>
+            </div>
+            <div class="col-sm-6">
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover">
+                        <thead>
+                            <tr>
+                                <th>Tipo de Placa</th>
+                                <th>Cantidad Existente</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% for i in inventario %}
+                           {% if i.cantidadsuma <= 10 %}
+                            <tr class="danger">
+                            {% else %}
+                            <tr>
+                            {% endif %}
+                                <td>{{ i.tipoconsumible.consumible }}</td>
+                                <td>{{ i.cantidadsuma }}</td>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts%}
+    <script src="/static/js/funciones.js"></script>
+{% endblock %}

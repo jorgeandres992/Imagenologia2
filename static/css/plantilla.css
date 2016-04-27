@@ -1,0 +1,38 @@
+
+.fondo{
+	background-color: white;
+	height:600px;
+}
+
+.usuario h3 {
+	margin-top: 0px;
+}
+
+.seccion {
+	padding-top: 10px;
+	padding-bottom: 10px;
+	background-color:#ADD8E6;
+}
+.abajo{
+	text-align:center;
+	color: white;
+	margin-bottom: 2px;
+}
+.margen{
+	margin-top: 10px;
+}
+
+.logo{
+	width:40px;
+	height: 45px;
+}
+
+.log {
+	padding:2px 5px;
+}
+.login{
+	margin-top:10%;
+}
+.margen-froter{
+	margin-top:5%;
+}

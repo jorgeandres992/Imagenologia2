@@ -1,0 +1,177 @@
+{% extends 'plantilla_menu.html' %}
+
+{% block menu %}
+<li class="active">
+	<a href="/menu"><i class="fa fa-fw fa-dashboard"></i> Inicio</a>
+</li>
+<li>
+	<a href="javascript:;" data-toggle="collapse" data-target="#eco"><i class="fa fa-fw fa-suitcase"></i> Ecografia <i class="fa fa-fw fa-caret-down"></i></a>
+	<ul id="eco" class="collapse">
+		<li>
+			<a href="/ecografia"><i class="fa fa-fw fa-edit"></i>  Registros</a>
+		</li>
+		<li>
+			<a href="/consulta_eco"><i class="fa fa-fw fa-search"></i>  Consulta de registros</a>
+		</li>
+		<li>
+			<a href="/especialista"><i class="fa fa-fw fa-print"></i>  Reportes Por Especialista</a>
+		</li>
+	</ul>
+</li>
+<li>
+	<a href="javascript:;" data-toggle="collapse" data-target="#rad"><i class="fa fa-fw fa-suitcase"></i> Radiologia <i class="fa fa-fw fa-caret-down"></i></a>
+	<ul id="rad" class="collapse">
+		<li>
+			<a href="/radiologia"><i class="fa fa-fw fa-edit"></i>  Registros</a>
+		</li>
+		<li>
+			<a href="/consulta_rad"><i class="fa fa-fw fa-desktop"></i>  Consulta de registros</a>
+		</li>
+        <li>
+            <a href="/inventario"><i class="fa fa-fw fa-table"></i> Inventario</a>
+        </li>
+		<li>
+			<a href="/lectura"><i class="fa fa-fw fa-search"></i>  Lectura</a>
+		</li>
+	</ul>
+</li>
+<li>
+	<a href="javascript:;" data-toggle="collapse" data-target="#demo"><i class="fa fa-fw fa-bar-chart"></i> Informes <i class="fa fa-fw fa-caret-down"></i></a>
+	<ul id="demo" class="collapse">
+		<li>
+			<a href="/infoecografia"><i class="fa fa-fw fa-print"></i>  Informes Ecografia</a>
+		</li>
+		<li>
+			<a href="/inforadiologia"><i class="fa fa-fw fa-print"></i>  Informe Radiologia</a>
+		</li>
+	</ul>
+</li>
+<li>
+	<a href="javascript:;" data-toggle="collapse" data-target="#admin"><i class="fa fa-fw fa-cogs"></i> Administración <i class="fa fa-fw fa-caret-down"></i></a>
+	<ul id="admin" class="collapse">
+		<li>
+			<a href="/usuarios"><i class="fa fa-fw fa-user"></i>  Crear Usuarios</a>
+		</li>
+	</ul>
+</li>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+<!-- Page Heading -->
+   <div class="row">
+		<div class="col-lg-12">
+			<h1 class="page-header">
+				BIENVENIDO <small>Menu de opciones</small>
+			</h1>
+			<ol class="breadcrumb">
+				<li class="active">
+					<i class="fa fa-dashboard"></i> Inicio
+				</li>
+			</ol>
+		</div>
+	</div>
+	<!-- /.row -->
+
+	<div class="row">
+		<div class="col-lg-12">
+			<div class="alert alert-info alert-dismissable">
+				<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+				<i class="fa fa-info-circle"></i>  <strong>Eliga una de las siguientes opciones </strong>!
+			</div>
+		</div>
+	</div>
+	<!-- /.row -->
+
+	<div class="row">
+		<div class="col-lg-3 col-md-6">
+			<div class="panel panel-primary">
+				<div class="panel-heading">
+					<div class="row">
+						<div class="col-xs-2">
+							<i class="fa fa-tasks fa-3x"></i>
+						</div>
+						<div class="col-xs-10 text-right">
+							<div class="huge">Radiologia</div>
+							<div>Placas Radiologia</div>
+						</div>
+					</div>
+				</div>
+				<a href="/radiologia">
+					<div class="panel-footer">
+						<span class="pull-left">Ingresar</span>
+						<span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+						<div class="clearfix"></div>
+					</div>
+				</a>
+			</div>
+		</div>
+		<div class="col-lg-3 col-md-6">
+			<div class="panel panel-green">
+				<div class="panel-heading">
+					<div class="row">
+						<div class="col-xs-2">
+							<i class="fa fa-tasks fa-3x"></i>
+						</div>
+						<div class="col-xs-10 text-right">
+							<div class="huge">Ecografia</div>
+							<div>Registro de estudios</div>
+						</div>
+					</div>
+				</div>
+				<a href="/ecografia">
+					<div class="panel-footer">
+						<span class="pull-left">Ingresar</span>
+						<span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+						<div class="clearfix"></div>
+					</div>
+				</a>
+			</div>
+		</div>
+		<div class="col-lg-3 col-md-6">
+			<div class="panel panel-yellow">
+				<div class="panel-heading">
+					<div class="row">
+						<div class="col-xs-2">
+							<i class="fa fa-comments fa-3x"></i>
+						</div>
+						<div class="col-xs-10 text-right">
+							<div class="huge">Inventario</div>
+							<div>Solo Radiologia</div>
+						</div>
+					</div>
+				</div>
+				<a href="/inventario">
+					<div class="panel-footer">
+						<span class="pull-left">Ingresar</span>
+						<span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+						<div class="clearfix"></div>
+					</div>
+				</a>
+			</div>
+		</div>
+		<div class="col-lg-3 col-md-6">
+			<div class="panel panel-red">
+				<div class="panel-heading">
+					<div class="row">
+						<div class="col-xs-2">
+							<i class="fa fa-support fa-4x"></i>
+						</div>
+						<div class="col-xs-10 text-right">
+							<div class="huge">Lectura</div>
+							<div>Placas radiologia</div>
+						</div>
+					</div>
+				</div>
+				<a href="/lectura">
+					<div class="panel-footer">
+						<span class="pull-left">Ingresar</span>
+						<span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+						<div class="clearfix"></div>
+					</div>
+				</a>
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock %}

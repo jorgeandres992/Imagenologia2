@@ -1,0 +1,149 @@
+{% extends 'plantilla_menu.html' %}
+
+{% block menu %}
+<li>
+	<a href="/menu"><i class="fa fa-fw fa-dashboard"></i> Inicio</a>
+</li>
+<li>
+	<a href="javascript:;" data-toggle="collapse" data-target="#eco"><i class="fa fa-fw fa-suitcase"></i> Ecografia <i class="fa fa-fw fa-caret-down"></i></a>
+	<ul id="eco" class="collapse">
+		<li>
+			<a href="/ecografia"><i class="fa fa-fw fa-edit"></i>  Registros</a>
+		</li>
+		<li>
+			<a href="/consulta_eco"><i class="fa fa-fw fa-search"></i>  Consulta de registros</a>
+		</li>
+		<li>
+			<a href="/especialista"><i class="fa fa-fw fa-print"></i>  Reportes Por Especialista</a>
+		</li>
+	</ul>
+</li>
+<li>
+	<a href="javascript:;" data-toggle="collapse" data-target="#rad"><i class="fa fa-fw fa-suitcase"></i> Radiologia <i class="fa fa-fw fa-caret-down"></i></a>
+	<ul id="rad" class="collapse">
+		<li>
+			<a href="/radiologia"><i class="fa fa-fw fa-edit"></i>  Registros</a>
+		</li>
+		<li>
+			<a href="/consulta_rad"><i class="fa fa-fw fa-desktop"></i>  Consulta de registros</a>
+		</li>
+        <li>
+            <a href="/inventario"><i class="fa fa-fw fa-table"></i> Inventario</a>
+        </li>
+		<li>
+			<a href="/lectura"><i class="fa fa-fw fa-search"></i>  Lectura</a>
+		</li>
+	</ul>
+</li>
+<li>
+	<a href="javascript:;" data-toggle="collapse" data-target="#info"><i class="fa fa-fw fa-bar-chart"></i> Informes <i class="fa fa-fw fa-caret-down"></i></a>
+	<ul id="info" class="collapse">
+		<li>
+			<a href="/infoecografia"><i class="fa fa-fw fa-print"></i>  Informes Ecografia</a>
+		</li>
+		<li>
+			<a href="/inforadiologia"><i class="fa fa-fw fa-print"></i>  Informe Radiologia</a>
+		</li>
+	</ul>
+</li>
+<li class="active">
+	<a href="javascript:;" data-toggle="collapse" data-target="#admin"><i class="fa fa-fw fa-cogs"></i> Administración <i class="fa fa-fw fa-caret-down"></i></a>
+	<ul id="admin" class="collapse">
+		<li>
+			<a href="/usuarios"><i class="fa fa-fw fa-user"></i>  Crear Usuarios</a>
+		</li>
+	</ul>
+</li>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+	<div class="col-lg-12">
+	    <h1 class="page-header">
+		ADMINISTRACIÓN
+		<small>USUARIOS DEL SISTEMA</small>
+	    </h1>
+	    <ol class="breadcrumb">
+		<li>
+		    <i class="fa fa-dashboard"></i>  <a href="/menu">Inicio</a>
+		</li>
+		<li>
+		    <i class="fa fa-cog"></i> Administración
+		</li>
+		<li class="active">
+		    <i class="fa fa-user"></i> Usuarios del sistema
+		</li>
+	    </ol>
+	</div>
+	<div class="col-lg-12">
+	    <div class="row">		
+            <div class="col-sm-12 form-group">
+                <div class="col-sm-12 form-group">
+                    <div class="col-sm-1">
+                        <label>Número de Id:</label>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="input-group">
+                          <input name="numeroid" id="numid" class="form-control" type="varchar" required />
+                          <span class="input-group-btn">
+                            <button id="find" class="btn btn-default" type="button">Buscar</button>
+                          </span>
+                        </div>
+                    </div>
+                    <div class="col-sm-7 usuario">
+                        <h3><div id="nombre" ></div></h3>
+                    </div>
+                </div>
+                <div class="col-sm-12 form-group">
+                    <div class="row">
+                        <div class="col-sm-12 form-group">
+                            <div class="col-sm-1">
+                                <label>Nombre:</label>
+                            </div>
+                            <div class="col-sm-5">
+                                <input class="form-control" name="first_name" id="first_name" type="text" required />
+                            </div>
+                            <div class="col-sm-1">
+                                <label>Apellido:</label>
+                            </div>
+                            <div class="col-sm-5">
+                                <input class="form-control" name="last_name" id="last_name" type="text" required />
+                            </div>
+                        </div>
+                        <div class="col-sm-12 form-group">
+                            <div class="col-sm-1">
+                                <label>Email:</label>
+                            </div>
+                            <div class="col-sm-5">
+                                <input class="form-control" type="email" required />
+                            </div>
+                        </div>
+                        <div class="col-sm-12 form-group">
+                            <div class="col-sm-2">
+                                <label>Contraseña:</label>
+                            </div>
+                            <div class="col-sm-4">
+                                <input name="password" class="form-control" type="password" required />
+                            </div>
+                            <div class="col-md-2">
+                                <label>Repita la contraseña:</label>
+                            </div>
+                            <div class="col-md-4">
+                                <input name="rpassword"class="form-control" type="password" required />
+                            </div>
+                        </div>
+                        <div class="col-xs-12">
+                            <button class="btn btn-default" type="submit">Guardar</button>
+                        </div>
+                    </div>
+		        </form>
+            </div>
+	    </div>
+	</div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+    <script src="/static/js/funciones.js"></script>
+{% endblock %}
