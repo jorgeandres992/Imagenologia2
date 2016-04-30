@@ -245,7 +245,17 @@ def buscar_paciente(request, documento):
     except Persona.DoesNotExist:
         output = {'error': 0}
         return HttpResponse(json.dumps(output),  content_type="application/json")
-        #return HttpResponse("Usuario no encontrado")
+
+@login_required(login_url='/')
+def permiso(request, logueo):
+    try:
+        rol = Rol.objects.get(usuario = logueo)
+        output = { 'permiso': rol.permiso.id}
+        print logueo
+        print rol.permiso.id
+        return HttpResponse(json.dumps(output),  content_type="application/json")
+    except Persona.DoesNotExist:
+        return HttpResponse("error de busqueda")
 
 @login_required(login_url='/')
 def buscar_servicio(request, codigo):

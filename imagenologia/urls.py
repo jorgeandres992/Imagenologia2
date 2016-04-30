@@ -36,6 +36,7 @@ urlpatterns = [
     url('^guardarecografia$', guardarecografia ),
     url('^guardarinventario$', guardarinventario ),
     url('^buscar/(?P<documento>\d+)$', buscar_paciente),
+    url('^permiso/(?P<logueo>\d+)$', permiso),
     url('^buscardoc/(?P<variable>\d+)$', buscar_docint),
     url('^searchservice/(?P<codigo>\d+)$', buscar_servicio),
     url('^searchserviceeco/(?P<codigo>\d+)$', buscar_servicioeco),

@@ -20,6 +20,46 @@ $(window).ready(function(){
          $.datepicker.setDefaults($.datepicker.regional['es']);
         $( "#fecha" ).datepicker();
     });
+    $(function(){
+         $.ajax("/permiso/" + $("#logueo").val())
+             .done(function (data) {
+                 var usr = data.permiso;
+                 var entrada = usr;
+                 if (entrada == 1) {
+                     var anuncio = "Bienvenido usuario Administrador, elija una de las siguientes opciones para continuar";
+                     $("#rolusr").text(anuncio);
+                    }
+                 else if (entrada == 2) {
+                     var anuncio = "Bienvenido usuario Radiologia, elija una de las siguientes opciones para continuar";
+                     $("#rolusr").text(anuncio);
+                     $('.ecography').hide();
+                     $('.ecograp').hide();
+                     $('.manager').hide();
+                    }
+                 else if(entrada == 3) {
+                     var anuncio = "Bienvenido usuario Ecografia, elija una de las siguientes opciones para continuar";
+                     $("#rolusr").text(anuncio);
+                     $('.radiography').hide();
+                     $('.radiolog').hide();
+                     $('.manager').hide();
+                    }
+                 else if(entrada == 4) {
+                     var anuncio = "Bienvenido usuario Consultor, elija una de las siguientes opciones para continuar";
+                     $("#rolusr").text(anuncio);
+                     $('.ecography').hide();
+                     $('.radigraphy').hide();
+                     $('.consultor').hide();
+                     $('.radiology').hide();
+                     $('.manager').hide();
+                    }
+                 else if(entrada == 5) {
+                     var anuncio = "Bienvenido usuario Integral, elija una de las siguientes opciones para continuar";
+                     $("#rolusr").text(anuncio);
+                     $('.manager').hide();
+                    }
+            })
+	});
+
     $("#find").click(function() {
         $.ajax("/buscar/" + $("#numid").val())
                 .done(function (data) {
@@ -123,7 +163,7 @@ $(function() {
             var day = "0" + dia;
     else
             var day = dia;
-     if (hora <= 9)
+    if (hora <= 9)
             hora = "0" + hora
     if (minuto <= 9)
             minuto = "0" + minuto

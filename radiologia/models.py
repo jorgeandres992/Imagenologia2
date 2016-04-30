@@ -95,6 +95,12 @@ class Lectura(models.Model):
     class Meta:
         db_table = 'LECTURA'
 
+class Permiso(models.Model):
+    permiso = models.CharField(max_length=30)
+    detalle = models.CharField(max_length=30)
+
+    class Meta:
+        db_table = 'PERMISO'
 
 class Persona(models.Model):
     nombre = models.CharField(max_length=60)
@@ -130,6 +136,13 @@ class Radiologia(models.Model):
 
     class Meta:
         db_table = 'RADIOLOGIA'
+
+class Rol(models.Model):
+    usuario = models.ForeignKey(User, models.DO_NOTHING)
+    permiso = models.ForeignKey(Permiso, models.DO_NOTHING)
+
+    class Meta:
+        db_table = 'ROL'
 
 
 class Servicio(models.Model):
