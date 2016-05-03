@@ -20,46 +20,6 @@ $(window).ready(function(){
          $.datepicker.setDefaults($.datepicker.regional['es']);
         $( "#fecha" ).datepicker();
     });
-    $(function(){
-         $.ajax("/permiso/" + $("#logueo").val())
-             .done(function (data) {
-                 var usr = data.permiso;
-                 var entrada = usr;
-                 if (entrada == 1) {
-                     var anuncio = "Bienvenido usuario Administrador, elija una de las siguientes opciones para continuar";
-                     $("#rolusr").text(anuncio);
-                    }
-                 else if (entrada == 2) {
-                     var anuncio = "Bienvenido usuario Radiologia, elija una de las siguientes opciones para continuar";
-                     $("#rolusr").text(anuncio);
-                     $('.ecography').hide();
-                     $('.ecograp').hide();
-                     $('.manager').hide();
-                    }
-                 else if(entrada == 3) {
-                     var anuncio = "Bienvenido usuario Ecografia, elija una de las siguientes opciones para continuar";
-                     $("#rolusr").text(anuncio);
-                     $('.radiography').hide();
-                     $('.radiolog').hide();
-                     $('.manager').hide();
-                    }
-                 else if(entrada == 4) {
-                     var anuncio = "Bienvenido usuario Consultor, elija una de las siguientes opciones para continuar";
-                     $("#rolusr").text(anuncio);
-                     $('.ecography').hide();
-                     $('.radigraphy').hide();
-                     $('.consultor').hide();
-                     $('.radiology').hide();
-                     $('.manager').hide();
-                    }
-                 else if(entrada == 5) {
-                     var anuncio = "Bienvenido usuario Integral, elija una de las siguientes opciones para continuar";
-                     $("#rolusr").text(anuncio);
-                     $('.manager').hide();
-                    }
-            })
-	});
-
     $("#find").click(function() {
         $.ajax("/buscar/" + $("#numid").val())
                 .done(function (data) {
@@ -129,23 +89,74 @@ $(window).ready(function(){
     });
 
 
-   $( "#formguardar" ).on( "submit", function( event ) {
+    $( "#formguardar" ).on( "submit", function( event ) {
         $.ajax({
             type: 'POST',
             url: 'guardarpersona',
             data: $(this).serialize(),
             success: function(data) {
-                var nombre_completo = data.nombre + " " + data.apellido;
-                var numero_id = data.identificacion;
-                $("#nombre").text(nombre_completo);
-                $("#numid").val(numero_id);
-                $('#nuevoModal').modal('hide');
+                if (data.resp == 0){
+                    var nombre_completo = data.nombre + " " + data.apellido;
+                    var numero_id = data.identificacion;
+                    $("#nuevoModal").modal('hide');
+                    $("#nombre").text(nombre_completo);
+                    $("#numid").val(numero_id);
+                }
+                else{
+                    var error = data.resp;
+                    var numero_id = data.identificacion;
+                    $("#nuevoModal").modal('hide');
+                    $("#nombre").text(error);
+                    $("#numid").val(numero_id);
+                }
             }
         });
        return false;
 
+   });
+    $( "#formusuario" ).on( "submit", function( event ) {
+        $.ajax({
+            type: 'POST',
+            url: 'guardarusuario',
+            data: $(this).serialize(),
+            success: function(data) {
+                if (data.indicador == 1){
+                    var aviso = data.resp;
+                    $("#avisos").text(aviso);
+                    $("#respuesta").removeClass("alert-info");
+                    $("#respuesta").addClass("alert-success");
+                    $("#respuesta").slideDown(400, function () {
+                        $(this).show(3000);
+                        $(this).delay(5000).slideUp(800, function () {
+                            $(this).hide(3000);
+                        });
+                    });
+                    $('#formusuario').each (function(){this.reset();
+                    });
+                    $('#nombre').text('');
+                    $('#numid').focus;
+                }
+                else {
+                    if (data.indicador == 0) {
+                        var aviso = data.resp;
+                        $("#avisos").text(aviso);
+                        $("#respuesta").removeClass("alert-info");
+                        $("#respuesta").addClass("alert-danger");
+                        $("#respuesta").slideDown(400, function () {
+                            $(this).show(3000);
+                            $(this).delay(5000).slideUp(800, function () {
+                                $(this).hide(3000);
+                            });
+                        });
+                    }
+                }
+            }
+        });
+       return false;
+   });
+    $("#respuesta").delay(5000).slideUp(800, function () {
+            $(this).hide(3000);
     });
-
 });
 
 $(function() {
@@ -175,46 +186,3 @@ $(function() {
     $('#fecha').val(f_actual);
     $('#hora').val(now);
 })
-
-
-function agregarusadas() {
-	campo = '<div class="col-xs-12 form-group"> \
-				<div class="col-xs-2"> \
-					<label class="control-label">Tipo de placa:</label> \
-				</div> \
-				<div class="col-xs-4"> \
-					<select class="form-control" name="placausada[]" required> \
-						<option value="">Seleccione</option> \
-					</select> \
-				</div> \
-				<div class="col-xs-2"> \
-					<label class="control-label">Cantidad:</label> \
-				</div> \
-				<div class="col-xs-3"> \
-					<input class="form-control" name="cantusada[]" type="interger" required /> \
-				</div> \
-				<div class="col-xs-1"></div> \
-			</div>';
-	$("#placas-usadas").append(campo);
-}
-
-function agregardanadas() {
-	campo = '<div class="col-xs-12 form-group"> \
-				<div class="col-xs-2"> \
-					<label class="control-label">Tipo de placa:</label> \
-				</div> \
-				<div class="col-xs-4"> \
-					<select class="form-control" name="placadanada[]" > \
-						<option value="">Seleccione</option> \
-					</select> \
-				</div> \
-				<div class="col-xs-2"> \
-					<label class="control-label">Cantidad:</label> \
-				</div> \
-				<div class="col-xs-3"> \
-					<input class="form-control" name="cantdanada[]" type="interger" /> \
-				</div> \
-				<div class="col-xs-1"></div> \
-			</div>';
-	$("#placas-danadas").append(campo);
-}

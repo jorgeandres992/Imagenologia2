@@ -73,12 +73,12 @@
 									</div>
 								</div>
 							</div>
-						</div> 
+						</div>
 					</div>
 					<div class="modal-footer">
 						<button id="find2" type="submit" class="btn btn-default">Guardar</button>
 					</div>
-				</form>	
+				</form>
 			</div>
 		</div>
 	</div>
@@ -103,6 +103,21 @@
 				</li>
 			</ol>
 		</div>
+    <!-- /.row -->
+        <div class="col-lg-12">
+        {% if ind == 1 %}
+                <div class="alert alert-success fade in" id="respuesta">
+                    <i class="fa fa-info-circle"></i> <strong>  {{ resp }}</strong>
+        {% elif ind == 0 %}
+                <div class="alert alert-danger fade in" id="respuesta">
+                    <i class="fa fa-close"></i> <strong>  {{ resp }}</strong>
+        {% else %}
+                <div class="alert alert-info fade in" id="respuesta">
+                    <i class="fa fa-info-circle"></i> <strong>  {{ resp }}</strong>
+        {% endif %}
+                </div>
+            </div>
+	<!-- /.row -->
 		<div class="col-lg-12">
 			<div class="row">
 				<form class="form-horizontal" method="post" action="guardarradiologia">
@@ -393,8 +408,50 @@
 	</div>
 </div>
 <div class="margen-froter"></div>
-{% endblock %}
+<script>
+    function agregarusadas() {
+        campo = '<div class="col-xs-12 form-group"> \
+                    <div class="col-xs-2"> \
+                        <label class="control-label">Tipo de placa:</label> \
+                    </div> \
+                    <div class="col-xs-4"> \
+                        <select class="form-control" name="placausada" required> \
+                            <option value="">Seleccione</option> \
+                            {% for p in placa %} \
+                            <option value="{{ p.id }}">{{ p.consumible }}</option> \
+                            {% endfor %} \
+                        </select> \
+                    </div> \
+                    <div class="col-xs-2"> \
+                        <label class="control-label">Cantidad:</label> \
+                    </div> \
+                    <div class="col-xs-3"> \
+                        <input class="form-control" name="cantusada" type="interger" required /> \
+                    </div> \
+                    <div class="col-xs-1"></div> \
+                </div>';
+        $("#placas-usadas").append(campo);
+    }
 
-{% block scripts%}
-    <script src="/static/js/funciones.js"></script>
+    function agregardanadas() {
+        campo = '<div class="col-xs-12 form-group"> \
+                    <div class="col-xs-2"> \
+                        <label class="control-label">Tipo de placa:</label> \
+                    </div> \
+                    <div class="col-xs-4"> \
+                        <select class="form-control" name="placadanada[]" > \
+                            <option value="">Seleccione</option> \
+                        </select> \
+                    </div> \
+                    <div class="col-xs-2"> \
+                        <label class="control-label">Cantidad:</label> \
+                    </div> \
+                    <div class="col-xs-3"> \
+                        <input class="form-control" name="cantdanada[]" type="interger" /> \
+                    </div> \
+                    <div class="col-xs-1"></div> \
+                </div>';
+        $("#placas-danadas").append(campo);
+    }
+</script>
 {% endblock %}

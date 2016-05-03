@@ -24,15 +24,28 @@
 		<div class="col-lg-12">
 			<div class="alert alert-info alert-dismissable">
 				<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-				<i class="fa fa-info-circle"></i>  <strong><label id="rolusr"></label></strong>!
+				<i class="fa fa-info-circle"></i><strong>          Bienvenido usuario
+                {% if user.groups.all.0.id == 1%}
+                    Administrador
+                {% elif user.groups.all.0.id == 2 %}
+                    Radiologia
+                {% elif user.groups.all.0.id == 3 %}
+                    Ecografia
+                {% elif user.groups.all.0.id == 4 %}
+                    Consultor
+                {% elif user.groups.all.0.id == 5 %}
+                    Ecografia y Radiologia
+                {% endif %}
+                , eliga una de las opciones para continuar</strong>!
 			</div>
 		</div>
 	</div>
 	<!-- /.row -->
 
 	<div class="row">
-        <div class="col-sm-12 row consultor">
-            <div class="col-lg-3 col-md-3 radiography">
+        <div class="col-sm-12 row">
+         {% if user.groups.all.0.id == 1 or user.groups.all.0.id == 2 or user.groups.all.0.id == 5 %}
+            <div class="col-lg-3 col-md-3">
                 <div class="panel panel-primary">
                     <div class="panel-heading">
                         <div class="row">
@@ -41,7 +54,7 @@
                             </div>
                             <div class="col-xs-10 text-right">
                                 <div class="huge">Radiologia</div>
-                                <div>Placas Radiologia</div>
+                                <div>Registros de estudios</div>
                             </div>
                         </div>
                     </div>
@@ -54,7 +67,10 @@
                     </a>
                 </div>
             </div>
-            <div class="col-lg-3 col-md-3 ecography">
+         {% endif %}
+
+         {% if user.groups.all.0.id == 1 or user.groups.all.0.id == 3 or user.groups.all.0.id == 5 %}
+            <div class="col-lg-3 col-md-3">
                 <div class="panel panel-green">
                     <div class="panel-heading">
                         <div class="row">
@@ -76,7 +92,10 @@
                     </a>
                 </div>
             </div>
-            <div class="col-lg-3 col-md-3 radiography">
+         {% endif %}
+
+         {% if user.groups.all.0.id == 1 or user.groups.all.0.id == 2 or user.groups.all.0.id == 5 %}
+            <div class="col-lg-3 col-md-3">
                 <div class="panel panel-yellow">
                     <div class="panel-heading">
                         <div class="row">
@@ -85,7 +104,7 @@
                             </div>
                             <div class="col-xs-10 text-right">
                                 <div class="huge">Inventario</div>
-                                <div>Solo Radiologia</div>
+                                <div>Ingreso de placas</div>
                             </div>
                         </div>
                     </div>
@@ -98,7 +117,9 @@
                     </a>
                 </div>
             </div>
-            <div class="col-lg-3 col-md-3 ecography">
+         {% endif %}
+         {% if user.groups.all.0.id == 1 or user.groups.all.0.id == 3 or user.groups.all.0.id == 5 %}
+            <div class="col-lg-3 col-md-3">
                 <div class="panel panel-red">
                     <div class="panel-heading">
                         <div class="row">
@@ -120,8 +141,7 @@
                     </a>
                 </div>
             </div>
-        </div>
-        <div class="col-sm-12 row">
+         {% endif %}
             <div class="col-lg-3 col-md-3">
                 <div class="panel panel-danger">
                     <div class="panel-heading">
@@ -166,7 +186,31 @@
                     </a>
                 </div>
             </div>
+
+            <div class="col-lg-3 col-md-3">
+                <div class="panel panel-info">
+                    <div class="panel-heading">
+                        <div class="row">
+                            <div class="col-xs-1">
+                                <i class="fa fa-search fa-3x"></i>
+                            </div>
+                            <div class="col-xs-10 text-right">
+                                <div class="huge">Informes</div>
+                                <div>Reporte por especialista</div>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="/especialista">
+                        <div class="panel-footer">
+                            <span class="pull-left">Ingresar</span>
+                            <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                            <div class="clearfix"></div>
+                        </div>
+                    </a>
+                </div>
+            </div>
         </div>
+
 	</div>
 </div>
 {% endblock %}

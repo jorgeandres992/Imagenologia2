@@ -38,9 +38,6 @@
                 
             </div>
             <!-- Top Menu Items -->
-            <div class="col-sm-1">
-                <input id="logueo" value="{{ user.id }}" style="visibility:hidden" />
-            </div>
             <ul class="nav navbar-right top-nav">
                 <li class="dropdown">
 					
@@ -66,56 +63,72 @@
                     <li {% block menu %}{% endblock %}>
                         <a href="/menu"><i class="fa fa-fw fa-dashboard"></i> Inicio</a>
                     </li>
-                    <li class="ecography {% block ecografia %}{% endblock %}">
-                        <a href="javascript:;" data-toggle="collapse" data-target="#eco"><i class="fa fa-fw fa-suitcase"></i> Ecografia <i class="fa fa-fw fa-caret-down"></i></a>
-                        <ul id="eco" class="collapse">
-                            <li>
-                                <a href="/ecografia"><i class="fa fa-fw fa-edit"></i>  Registros</a>
-                            </li>
-                            <li>
-                                <a href="/consulta_eco"><i class="fa fa-fw fa-search"></i>  Consulta de registros</a>
-                            </li>
-                            <li>
-                                <a href="/especialista"><i class="fa fa-fw fa-print"></i>  Reportes Por Especialista</a>
-                            </li>
-                        </ul>
-                    </li>
-                    <li class="radiology {% block radiologia %}{% endblock %}">
-                        <a href="javascript:;" data-toggle="collapse" data-target="#rad"><i class="fa fa-fw fa-suitcase"></i> Radiologia <i class="fa fa-fw fa-caret-down"></i></a>
-                        <ul id="rad" class="collapse">
-                            <li class="radiography">
-                                <a href="/radiologia"><i class="fa fa-fw fa-edit"></i>  Registros</a>
-                            </li>
-                            <li class="radiography">
-                                <a href="/consulta_rad"><i class="fa fa-fw fa-desktop"></i>  Consulta de registros</a>
-                            </li>
-                            <li class="radiography">
-                                <a href="/inventario"><i class="fa fa-fw fa-table"></i> Inventario</a>
-                            </li>
-                            <li class="ecography">
-                                <a href="/lectura"><i class="fa fa-fw fa-search"></i>  Lectura</a>
-                            </li>
-                        </ul>
-                    </li>
+                    {% if user.groups.all.0.id == 1 or user.groups.all.0.id == 3 or user.groups.all.0.id == 5 %}
+                        <li class="{% block ecografia %}{% endblock %}">
+                            <a href="javascript:;" data-toggle="collapse" data-target="#eco"><i class="fa fa-fw fa-suitcase"></i> Ecografia <i class="fa fa-fw fa-caret-down"></i></a>
+                            <ul id="eco" class="collapse">
+                                <li>
+                                    <a href="/consulta_eco"><i class="fa fa-fw fa-search"></i>  Consulta de registros</a>
+                                </li>
+                                <li>
+                                    <a href="/ecografia"><i class="fa fa-fw fa-edit"></i>  Ingreso de registros</a>
+                                </li>
+                            </ul>
+                        </li>
+                    {% endif %}
+
+                    {% if user.groups.all.0.id == 1 or user.groups.all.0.id == 2 or user.groups.all.0.id == 3 or user.groups.all.0.id == 5 %}
+                        <li class="{% block radiologia %}{% endblock %}">
+                            <a href="javascript:;" data-toggle="collapse" data-target="#rad"><i class="fa fa-fw fa-suitcase"></i> Radiologia <i class="fa fa-fw fa-caret-down"></i></a>
+                            <ul id="rad" class="collapse">
+
+                                {%  if user.groups.all.0.id == 1 or user.groups.all.0.id == 2 or user.groups.all.0.id == 5 %}
+                                    <li>
+                                        <a href="/consulta_rad"><i class="fa fa-fw fa-desktop"></i>  Consulta de registros</a>
+                                    </li>
+                                    <li>
+                                        <a href="/inventario"><i class="fa fa-fw fa-table"></i> Inventario</a>
+                                    </li>
+                                    <li>
+                                        <a href="/radiologia"><i class="fa fa-fw fa-edit"></i>  Ingreso de registros</a>
+                                    </li>
+                                {% endif %}
+
+                                {%  if user.groups.all.0.id == 1 or user.groups.all.0.id == 3 or user.groups.all.0.id == 5 %}
+                                    <li>
+                                        <a href="/lectura"><i class="fa fa-fw fa-search"></i>  Lectura</a>
+                                    </li>
+                                {% endif %}
+
+                            </ul>
+                        </li>
+                    {% endif %}
+
                     <li class="{% block informe %}{% endblock %}">
                         <a href="javascript:;" data-toggle="collapse" data-target="#demo"><i class="fa fa-fw fa-bar-chart"></i> Informes <i class="fa fa-fw fa-caret-down"></i></a>
                         <ul id="demo" class="collapse">
                             <li class="ecograp">
                                 <a href="/infoecografia"><i class="fa fa-fw fa-print"></i>  Informes Ecografia</a>
                             </li>
+                            <li>
+                                <a href="/especialista"><i class="fa fa-fw fa-print"></i>  Informe Especialista</a>
+                            </li>
                             <li class="radiolog">
                                 <a href="/inforadiologia"><i class="fa fa-fw fa-print"></i>  Informe Radiologia</a>
                             </li>
                         </ul>
                     </li>
-                    <li class="manager {% block administracion %}{% endblock %}"s>
-                        <a href="javascript:;" data-toggle="collapse" data-target="#admin"><i class="fa fa-fw fa-cogs"></i> Administración <i class="fa fa-fw fa-caret-down"></i></a>
-                        <ul id="admin" class="collapse">
-                            <li>
-                                <a href="/usuarios"><i class="fa fa-fw fa-user"></i>  Crear Usuarios</a>
-                            </li>
-                        </ul>
-                    </li>
+
+                    {% if user.groups.all.0.id == 1 %}
+                        <li class="manager {% block administracion %}{% endblock %}"s>
+                            <a href="javascript:;" data-toggle="collapse" data-target="#admin"><i class="fa fa-fw fa-cogs"></i> Administración <i class="fa fa-fw fa-caret-down"></i></a>
+                            <ul id="admin" class="collapse">
+                                <li>
+                                    <a href="/usuarios"><i class="fa fa-fw fa-user"></i>  Crear Usuarios</a>
+                                </li>
+                            </ul>
+                        </li>
+                    {% endif %}
                 </ul>
             </div>
             <!-- /.navbar-collapse -->
