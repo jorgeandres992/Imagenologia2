@@ -324,7 +324,7 @@
 																	<label class="control-label">Tipo de placa:</label>
 																</div>
 																<div class="col-xs-4">
-																	<select class="form-control" name="placadanada[]">
+																	<select class="form-control" name="placadanada">
 																		<option value="">Seleccione</option>
 																		{% for pl in placa %}
 																		<option value="{{ pl.id }}">{{ pl.consumible }}</option>
@@ -335,7 +335,7 @@
 																	<label class="control-label">Cantidad:</label>
 																</div>
 																<div class="col-xs-3">
-																	<input class="form-control" name="cantdanada[]" type="interger" />
+																	<input class="form-control" name="cantdanada" type="interger" />
 																</div>
 																<div class="col-xs-1">
 																	<span><a href="#" onclick="agregardanadas();"><i class="fa fa-plus-square fa-2x"></i></a></span>
@@ -368,6 +368,7 @@
 								</div>								
 								<div class="col-sm-12">
 									<button class="btn btn-default" type="submit">Guardar</button>
+                                    <a class="btn btn-default" target="blank" href="/generar_pdf">Imprimir</a>
 								</div>								
 							</div>
 						</div>
@@ -439,15 +440,18 @@
                         <label class="control-label">Tipo de placa:</label> \
                     </div> \
                     <div class="col-xs-4"> \
-                        <select class="form-control" name="placadanada[]" > \
+                        <select class="form-control" name="placadanada"> \
                             <option value="">Seleccione</option> \
+                            {% for pl in placa %} \
+                            <option value="{{ pl.id }}">{{ pl.consumible }}</option> \
+                            {% endfor %} \
                         </select> \
                     </div> \
                     <div class="col-xs-2"> \
                         <label class="control-label">Cantidad:</label> \
                     </div> \
                     <div class="col-xs-3"> \
-                        <input class="form-control" name="cantdanada[]" type="interger" /> \
+                        <input class="form-control" name="cantdanada" type="interger" /> \
                     </div> \
                     <div class="col-xs-1"></div> \
                 </div>';

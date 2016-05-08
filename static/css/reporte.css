@@ -1,0 +1,5 @@
+.cuadrado {
+     width: 100px;
+     height: 100px;
+     background: darken(#428bca, 6.5%);
+}

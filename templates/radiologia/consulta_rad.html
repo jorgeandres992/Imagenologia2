@@ -5,25 +5,114 @@ active
 {% endblock %}
 
 {% block content %}
-<div class="container-fluid">
-	<div class="row">
-		<div class="col-lg-12">
-			<h1 class="page-header">
-				CONSULTA DE DATOS
-				<small>RADIOLOGIA</small>
-			</h1>
-			<ol class="breadcrumb">
-				<li>
-					<i class="fa fa-dashboard"></i>  <a href="/menu">Inicio</a>
-				</li>
-				<li>
-					<i class="fa fa-folder-open"></i> Radiologia
-				</li>
-				<li class="active">
-					<i class="fa fa-search"></i> Consulta Radiologia
-				</li>
-			</ol>
-		</div>
-	</div>
-</div>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-12">
+                <h1 class="page-header">
+                    CONSULTA DE DATOS
+                    <small>RADIOLOGIA</small>
+                </h1>
+                <ol class="breadcrumb">
+                    <li>
+                        <i class="fa fa-dashboard"></i>  <a href="/menu">Inicio</a>
+                    </li>
+                    <li>
+                        <i class="fa fa-folder-open"></i> Radiologia
+                    </li>
+                    <li class="active">
+                        <i class="fa fa-search"></i> Consulta Radiologia
+                    </li>
+                </ol>
+            </div>
+        </div>
+    </div>
+
+<!-- /.row -->
+
+    <div class="col-lg-12">
+    {% if indicador == 0 %}
+        <div class="alert alert-success fade in" id="respuesta">
+            <i class="fa fa-info-circle"></i> <strong>  {{ respuesta }}</strong>
+    {% elif indicador == 1 %}
+        <div class="alert alert-danger fade in" id="respuesta">
+            <i class="fa fa-info-circle"></i> <strong>  {{ respuesta }}</strong>
+    {% else %}
+        <div class="alert alert-info fade in" id="respuesta">
+            <i class="fa fa-info-circle"></i> <strong>  Favor complete los campos para hacer la busqueda</strong>
+    {% endif %}
+        </div>
+    </div>
+<!-- /.row -->
+    <div class="col-sm-12">
+        <form class="form-horizontal" method="post" action="buscarconsultaradiologia">
+            {% csrf_token %}
+            <div class="col-xs-12 row form-group">
+                <!--div class="col-xs-1">
+                    <label>Número de Id:</label>
+                </div>
+                <div class="col-xs-3">
+                    <div class="input-group">
+                      <input name="numeroid" id="numid" class="form-control" type="varchar" required />
+                      <span class="input-group-btn">
+                        <button id="find" class="btn btn-default" type="button">Buscar</button>
+                      </span>
+                    </div>
+                </div-->
+                <div class="col-sm-12">
+                    <div class="col-md-1">
+                        <label>Fecha inicial:</label>
+                    </div>
+                    <div class="col-md-3">
+                        <input name="fechainicial" id="" class="form-control fecha" type="text" required />
+                    </div>
+
+                    <div class="col-md-1">
+                        <label>Fecha final:</label>
+                    </div>
+                    <div class="col-md-3">
+                        <input name="fechafinal" id="" class="form-control fecha" type="text" required />
+                    </div>
+                    <div class="col-sm-2">
+                        <button class="btn btn-default" type="submit">Buscar</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div class="container-fluid">
+        <div class="col-md-12">
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>N° de identificación</th>
+                            <th>Fecha</th>
+                            <th>Hora</th>
+                            <th>Servicio</th>
+                            <th>Area</th>
+                            <th>Entidad</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for r in registros %}
+                        <tr>
+                            <td>{{ r.serviciopaciente.persona.nombre }} {{ r.serviciopaciente.persona.apellido }}</td>
+                            <td>{{ r.serviciopaciente.persona.identificacion }}</td>
+                            <td>{{ r.fecha |date:"d/m/Y" }}</td>
+                            <td>{{ r.hora }}</td>
+                            <td>{{ r.serviciopaciente.servicio.servicio }}</td>
+                            <td>{{ r.area.area }}</td>
+                            <td>{{ r.entidad.entidad }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="margen-froter"></div>
+
+
 {% endblock %}

@@ -18,7 +18,7 @@ $(window).ready(function(){
          yearSuffix: ''
          };
          $.datepicker.setDefaults($.datepicker.regional['es']);
-        $( "#fecha" ).datepicker();
+        $( ".fecha" ).datepicker();
     });
     $("#find").click(function() {
         $.ajax("/buscar/" + $("#numid").val())
@@ -154,8 +154,8 @@ $(window).ready(function(){
         });
        return false;
    });
-    $("#respuesta").delay(5000).slideUp(800, function () {
-            $(this).hide(3000);
+    $("#respuesta").delay(3000).slideUp(500, function () {
+            $(this).hide(2000);
     });
 });
 

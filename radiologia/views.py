@@ -1,15 +1,18 @@
-from datetime import date
+from datetime import datetime,date
+import weasyprint
+from django.conf import settings
 from django.contrib.auth.decorators import login_required
+from django.http import response
 from django.http.response import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render, render_to_response, redirect
-from django.template import RequestContext
+from django.template import RequestContext, Context
 from django.contrib.auth.models import User, Group
 from django.contrib.auth import login as auth_login, logout as auth_logout
 from .models import *
 from django.contrib.auth.hashers import make_password
+from weasyprint import HTML, CSS
+from django.template.loader import get_template
 from validators import *
-
-
 import json
 
 # Create your views here.
@@ -81,6 +84,11 @@ def consulta_eco(request):
         return render_to_response('ecografia/consulta_eco.html', context_instance = RequestContext(request))
     else:
          return HttpResponseRedirect('/menu')
+
+def reporte(request):
+    return render_to_response('reporte.html', context_instance = RequestContext(request))
+
+
 @login_required(login_url='/')
 def ecografia(request):
     if request.user.groups.filter(id = 1).exists() or request.user.groups.filter(id = 3).exists() or request.user.groups.filter(id = 5).exists():
@@ -193,17 +201,16 @@ def guardarpersona(request):
 
 @login_required(login_url='/')
 def guardarinventario(request):
+    if request.user.groups.filter(id = 3).exists()or request.user.groups.filter(id = 4).exists():
+        return HttpResponseRedirect('/menu')
+    else:
         if request.method == 'POST':
-            #carga el inventario en la bd
             entinventario = Entrada()
-
             entinventario.fechaentrada = request.POST['fechaentrada']
             entinventario.tipoconsumible = Tipoconsumible.objects.get(id = request.POST['tipoconsumible'])
             entinventario.cantidad = request.POST['cantidad']
             entinventario.usuario = User.objects.get(id = request.POST['usuario'])
-
             entinventario.save()
-
             #actualizacion de valores en inventaro
             var = Inventario.objects.get(id = request.POST['tipoconsumible'])
             inventario = Inventario(var.id)
@@ -219,71 +226,102 @@ def guardarinventario(request):
 
 @login_required(login_url='/')
 def guardarradiologia(request):
-    consum = None
-    placas = Inventario.objects.all()
-    for p in range(len(placas)):
-        if placas[p].cantidadsuma <= 0:
-            consum = placas[p].cantidadsuma
-            break
-    if not consum <= 0:
-
-        if request.method == 'POST':
-            #carga del servicio relacionandolo con el paciente
-            spaciente = Serviciopaciente()
-            spaciente.servicio = Servicio.objects.get(id = request.POST['servicio'])
-            spaciente.persona = Persona.objects.get(identificacion = request.POST['numeroid'])
-            spaciente.save()
-            #fin de cargue del servicio
-            #carga de datos de la tabla principal
-            radiologia = Radiologia()
-            radiologia.area = Area.objects.get(id = request.POST['area'])
-            radiologia.fecha = request.POST['fecha']
-            radiologia.hora = request.POST['hora']
-            radiologia.entidad = Entidad.objects.get(id = request.POST['entidad'])
-            radiologia.serviciopaciente = Serviciopaciente.objects.get(id = spaciente.id)
-            radiologia.docint = Docint.objects.get(id = request.POST['docinterno'])
-            radiologia.numinterno = request.POST['numinterno']
-
-            if request.POST['insumo'] == '':
-                radiologia.cantidadiopamidol = 0.0
-            else:
-                radiologia.cantidadiopamidol = request.POST['insumo']
-
-            radiologia.tecnico = User.objects.get(id = request.POST['tecnico'])
-            radiologia.kilovoltaje = request.POST['kilovoltaje']
-            radiologia.miliamperaje = request.POST['miliamperaje']
-            radiologia.leido = 0
-
-            radiologia.save()
-            #carga de las placas
-
-            placas = request.POST.getlist('placausada')
-            cantidad = request.POST.getlist('cantusada')
-            i = 0
-            radiolog = Radiologia.objects.get(id = radiologia.id)
-
-            while i < len(placas):
-                consumible = Consumibleusado()
-                consumible.tipoconsumible = Tipoconsumible.objects.get(id = placas[i])
-                consumible.cantidad = cantidad[i]
-                consumible.radiologia = radiolog
-                consumible.save()
-                var = Inventario.objects.get(tipoconsumible=consumible.tipoconsumible)
-                inventario = Inventario(var.id)
-                inventario.tipoconsumible = Tipoconsumible.objects.get(id = placas[i])
-                valorini = var.cantidadsuma
-                valorfin = int(cantidad[i])
-                total = valorini - valorfin
-                inventario.cantidadsuma = int(total)
-                inventario.save()
-                i = i+1
-
-        request.session['respuesta'] = "El registro ha sido creado exitosamente"
-        return HttpResponseRedirect('/radiologia')
+    if request.user.groups.filter(id = 3).exists() or request.user.groups.filter(id = 4).exists():
+        return HttpResponseRedirect('/menu')
     else:
-        aviso = ("La placas del inventario se encuentran agotadas, por favor revise el inventario, EL REGISTRO NO SERA GUARDADO")
-        request.session['error'] = aviso
-        return HttpResponseRedirect('/radiologia')
+        consum = None
+        placas = Inventario.objects.all()
+        for p in range(len(placas)):
+            if placas[p].cantidadsuma <= 0:
+                consum = placas[p].cantidadsuma
+                break
+        etiqueta = None
+        if not consum <= 0 or consum is None:
+            if request.method == 'POST':
+                #carga del servicio relacionandolo con el paciente
+                spaciente = Serviciopaciente()
+                spaciente.servicio = Servicio.objects.get(id = request.POST['servicio'])
+                spaciente.persona = Persona.objects.get(identificacion = request.POST['numeroid'])
+                spaciente.save()
+                #fin de cargue del servicio
+                #carga de datos de la tabla principal
+                radiologia = Radiologia()
+                radiologia.area = Area.objects.get(id = request.POST['area'])
+                radiologia.fecha = request.POST['fecha']
+                radiologia.hora = request.POST['hora']
+                radiologia.entidad = Entidad.objects.get(id = request.POST['entidad'])
+                radiologia.serviciopaciente = Serviciopaciente.objects.get(id = spaciente.id)
+                radiologia.docint = Docint.objects.get(id = request.POST['docinterno'])
+                radiologia.numinterno = request.POST['numinterno']
+
+                if request.POST['insumo'] == '':
+                    radiologia.cantidadiopamidol = 0.0
+                else:
+                    radiologia.cantidadiopamidol = request.POST['insumo']
+
+                radiologia.tecnico = User.objects.get(id = request.POST['tecnico'])
+                radiologia.kilovoltaje = request.POST['kilovoltaje']
+                radiologia.miliamperaje = request.POST['miliamperaje']
+                radiologia.leido = 0
+                radiologia.save()
+                #carga de las placas
+
+                placas = request.POST.getlist('placausada')
+                cantidad = request.POST.getlist('cantusada')
+                i = 0
+                radiolog = Radiologia.objects.get(id = radiologia.id)
+
+                while i < len(placas):
+                    consumible = Consumibleusado()
+                    consumible.tipoconsumible = Tipoconsumible.objects.get(id = placas[i])
+                    consumible.cantidad = cantidad[i]
+                    consumible.radiologia = radiolog
+                    consumible.save()
+                    var = Inventario.objects.get(tipoconsumible=consumible.tipoconsumible)
+                    inventario = Inventario(var.id)
+                    inventario.tipoconsumible = Tipoconsumible.objects.get(id = placas[i])
+                    valorini = var.cantidadsuma
+                    valorfin = int(cantidad[i])
+                    total = valorini - valorfin
+                    inventario.cantidadsuma = int(total)
+                    inventario.save()
+                    i = i+1
+
+                print request.POST['placadanada']
+
+                if not request.POST['placadanada'] == '':
+                    placasd = request.POST.getlist('placadanada')
+                    cantidadd = request.POST.getlist('cantdanada')
+                    i = 0
+                    radiolog = Radiologia.objects.get(id = radiologia.id)
+
+                    while i < len(placasd):
+                        consumibled = Consumibledanado()
+                        consumibled.tipoconsumible = Tipoconsumible.objects.get(id = placasd[i])
+                        consumibled.cantidad = cantidadd[i]
+                        consumibled.radiologia = radiolog
+                        consumibled.save()
+                        var = Inventario.objects.get(tipoconsumible=consumible.tipoconsumible)
+                        inventario = Inventario(var.id)
+                        inventario.tipoconsumible = Tipoconsumible.objects.get(id = placasd[i])
+                        valorini = var.cantidadsuma
+                        valorfin = int(cantidadd[i])
+                        total = valorini - valorfin
+                        inventario.cantidadsuma = int(total)
+                        inventario.save()
+                        i = i+1
+
+                tecnico = (radiologia.tecnico.first_name + ' '+radiologia.tecnico.last_name)
+                etiqueta = {'nombre':spaciente.persona.nombre, 'apellido':spaciente.persona.apellido, 'tipoid':spaciente.persona.tipoid.tipoid, 'identificacion':spaciente.persona.identificacion, 'servicio':spaciente.servicio.servicio,'fecha':radiologia.fecha, 'tecnico': tecnico}
+
+            request.session['respuesta'] = "El registro ha sido creado exitosamente"
+            request.session['etiqueta'] = etiqueta
+
+            return HttpResponseRedirect('/radiologia')
+        else:
+            aviso = ("La placas del inventario se encuentran agotadas, por favor revise el inventario, EL REGISTRO NO SERA GUARDADO")
+            request.session['error'] = aviso
+            return HttpResponseRedirect('/radiologia')
 
 @login_required(login_url='/')
 def guardarecografia(request):
@@ -355,3 +393,24 @@ def buscar_docint(request, variable):
     except Persona.DoesNotExist:
         return HttpResponse("Docuento interno no encontrado")
 
+def buscar_consulta_radiologia(request):
+    registros = Radiologia.objects.filter(fecha__range=(request.POST['fechainicial'],request.POST['fechafinal']))
+    indicador = 0
+    respuesta = 'Consulta realizada con exito'
+
+    return render_to_response('radiologia/consulta_rad.html', {'indicador':indicador, 'respuesta':respuesta, 'registros':registros}, context_instance = RequestContext(request))
+
+def generate_PDF(request):
+    dato = None
+    if request.session.has_key('etiqueta'):
+        dato = request.session.get('etiqueta')
+        #del request.session['etiqueta']
+
+    fecha = datetime.strptime(dato['fecha'], "%Y-%m-%d").strftime("%d/%m/%Y")
+    template = get_template("reporte.html")
+    context = {"nombre":(dato['nombre']+' '+dato['apellido']), 'fecha':fecha,"identificacion":(dato['tipoid'] +'.' + ' '+dato['identificacion']), 'servicio': dato['servicio'], 'tecnico':dato['tecnico']}
+    html = template.render(RequestContext(request, context))
+    response = HttpResponse(content_type='application/pdf')
+    weasyprint.HTML(string=html,base_url=request.build_absolute_uri()).write_pdf(response)
+    print fecha
+    return response
