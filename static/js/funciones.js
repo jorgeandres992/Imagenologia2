@@ -1,4 +1,21 @@
+function comprobar_insumo(data) {
+    if (data.insumo == true) {
+        $("#insumo").show()
+    }
+    else {
+        $("#insumo").hide()
+    }
+}
+
+function ajax_buscar_servicio(cod, per) {
+    return $.ajax({
+        url: "/searchservice/",
+        type: 'get',
+        data: {codigo: cod, persona: per}
+    });
+}
 $(window).ready(function(){
+    $("#insumo").hide()
     $(function() {
         $.datepicker.regional['es'] = {
          closeText: 'Cerrar',
@@ -43,34 +60,49 @@ $(window).ready(function(){
                 });
     });
 
-    $("#area").focusout(function() {
+    $("#area").change(function() {
         $.ajax("/buscardoc/" + $("#area").val())
-                .done(function (data) {
-                    var doc_interno = data.docint;
-                    $("#docint").val(doc_interno);
-                })
-                .fail(function () {
-                    var error = "Intente colocar el area de nuevo";
-                    alert(error);
-                    $("#area" ).val('');
-                    $("#area" ).focus();
-                });
+            .done(function (data) {
+                var doc_interno = data.docint;
+                $("#docint").val(doc_interno);
+            })
+            .fail(function () {
+                $("#docint").val('');
+            });
     });
 
+    $("#codservicio").click(function () {
+        var cod = $("#codigo").val();
+        var per = $("#numid").val();
+        ajax_buscar_servicio(cod, per)
+            .done(function (data) {
+                $("#servicio").val(data.id);
+                $("#dosismgy").val(data.dosismgy);
+                comprobar_insumo(data);
+            })
+            .fail(function () {
+                alert("El codigo ingresado no existe");
+                $( "#codigo" ).val('');
+                $( "#servicio" ).val('');
+                $( "#codigo" ).focus();
+            })
+    });
+    $("#servicio").change(function () {
+        var cod = $("#servicio").val();
+        var per = $("#numid").val();
+        ajax_buscar_servicio(cod, per)
+            .done(function (data) {
+                $("#dosismgy").val(data.dosismgy);
+                $("#codigo").val(data.codigo);
+                comprobar_insumo(data);
+            })
+            .fail(function () {
+                var error = "Error inesperado";
+                alert(error);
+                $( "#servicio" ).val('');
+                $( "#codigo" ).val('');
 
-    $("#codservicio").click(function() {
-        $.ajax("/searchservice/" + $("#codigo").val())
-                .done(function (data) {
-                    var servicio_completo = data.servicio;
-                    $("#servicio").val(servicio_completo);
-                })
-                .fail(function () {
-                    var error = "El codigo ingresado no existe";
-                    alert(error);
-                    $( "#codigo" ).val('');
-                    $( "#servicio" ).val('');
-                    $( "#codigo" ).focus();
-                });
+            });
     });
 
     $("#codservicioeco").click(function() {
@@ -156,6 +188,9 @@ $(window).ready(function(){
    });
     $("#respuesta").delay(3000).slideUp(500, function () {
             $(this).hide(2000);
+    });
+    $("#imprimir").click().delay(2000, function(){
+        window.open('/generar_pdf', '_blank')
     });
 });
 

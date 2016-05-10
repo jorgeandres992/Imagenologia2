@@ -95,11 +95,14 @@ class Lectura(models.Model):
     class Meta:
         db_table = 'LECTURA'
 
+list_sexo = ( ('M', 'Masculino') , ('F', 'Femenino'))
 class Persona(models.Model):
     nombre = models.CharField(max_length=60)
     apellido = models.CharField(max_length=60)
     tipoid = models.ForeignKey('Tipoid', models.DO_NOTHING)
     identificacion = models.CharField(max_length=20)
+    edad = models.IntegerField()
+    genero = models.CharField(max_length=1, choices=list_sexo)
     tipopaciente = models.ForeignKey('Tipopaciente', models.DO_NOTHING)
 
     class Meta:

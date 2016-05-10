@@ -37,11 +37,11 @@ urlpatterns = [
     url(r'^guardarecografia$', guardarecografia ),
     url(r'^guardarinventario$', guardarinventario ),
     url(r'^buscarconsultaradiologia$', buscar_consulta_radiologia ),
-    url(r'^generar_pdf$', generate_PDF ),
+    url(r'^generar_pdf$', generate_PDF, name= 'Etiqueta' ),
     url(r'^reporte$', reporte ),
     url(r'^buscar/(?P<documento>\d+)$', buscar_paciente),
     url(r'^buscardoc/(?P<variable>\d+)$', buscar_docint),
-    url(r'^searchservice/(?P<codigo>\d+)$', buscar_servicio),
+    url(r'^searchservice/$', buscar_servicio, name = 'searchservice'),
     url(r'^searchserviceeco/(?P<codigo>\d+)$', buscar_servicioeco),
     url(r'^admin/', admin.site.urls),
 ]

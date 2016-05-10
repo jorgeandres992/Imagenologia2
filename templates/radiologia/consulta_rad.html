@@ -91,6 +91,7 @@ active
                             <th>Fecha</th>
                             <th>Hora</th>
                             <th>Servicio</th>
+                            <th>Dosis Mgy</th>
                             <th>Area</th>
                             <th>Entidad</th>
                         </tr>
@@ -103,6 +104,17 @@ active
                             <td>{{ r.fecha |date:"d/m/Y" }}</td>
                             <td>{{ r.hora }}</td>
                             <td>{{ r.serviciopaciente.servicio.servicio }}</td>
+                            {% if r.serviciopaciente.persona.tipopaciente.tipopaciente == 'BEBE' %}
+                                <td>{{ r.serviciopaciente.servicio.dosismgy.bebe }}</td>
+                            {% elif r.serviciopaciente.persona.tipopaciente.tipopaciente == 'NIÑO' %}
+                                <td>{{ r.serviciopaciente.servicio.dosismgy.nino }}</td>
+                            {% elif r.serviciopaciente.persona.tipopaciente.tipopaciente == 'ADULTO' %}
+                                <td>{{ r.serviciopaciente.servicio.dosismgy.adulto }}</td>
+                            {% elif r.serviciopaciente.persona.tipopaciente.tipopaciente == 'ADULTO OBESO' %}
+                                <td>{{ r.serviciopaciente.servicio.dosismgy.adultoobeso }}</td>
+                            {% else %}
+                                <td>No encontrado</td>
+                            {% endif %}
                             <td>{{ r.area.area }}</td>
                             <td>{{ r.entidad.entidad }}</td>
                         </tr>
