@@ -26,8 +26,23 @@ active
             </div>
         </div>
     </div>
+    <!-- /.row -->
+    <div class="col-lg-12">
+    {% if ind == 0 or ind  == 1%}
+            <div class="alert alert-info fade in" id="respuesta_lectura">
+                <i class="fa fa-info-circle"></i> <strong>  {{ resp }}</strong>
+    {% elif ind == 2 %}
+            <div class="alert alert-success fade in" id="respuesta_lectura">
+                <i class="fa fa-info-circle"></i> <strong>  {{ resp }}</strong>
+    {% else %}
+            <div class="alert alert-danger fade in" id="respuesta_lectura">
+                <i class="fa fa-close"></i> <strong>  Error inesperado, comuniquese con el administrador del sistema</strong>
+    {% endif %}
+            </div>
+        </div>
+	<!-- /.row -->
     <div class="col-sm-12">
-        <form class="form-horizontal" method="post" action="buscarconsultaradiologia">
+        <form class="form-horizontal" method="post" action="buscarlectura">
             {% csrf_token %}
             <div class="col-xs-12 row form-group">
                 <div class="col-sm-12">
@@ -53,46 +68,52 @@ active
     </div>
     <div class="container-fluid">
         <div class="col-md-12">
-            <div class="table-responsive">
-                <table class="table table-bordered table-hover">
-                    <thead>
-                        <tr>
-                            <th>Nombre</th>
-                            <th>N° de identificación</th>
-                            <th>Fecha</th>
-                            <th>Hora</th>
-                            <th>Servicio</th>
-                            <th>Dosis Mgy</th>
-                            <th>Area</th>
-                            <th>Entidad</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    {% for r in registros %}
-                        <tr>
-                            <td>{{ r.serviciopaciente.persona.nombre }} {{ r.serviciopaciente.persona.apellido }}</td>
-                            <td>{{ r.serviciopaciente.persona.identificacion }}</td>
-                            <td>{{ r.fecha |date:"d/m/Y" }}</td>
-                            <td>{{ r.hora }}</td>
-                            <td>{{ r.serviciopaciente.servicio.servicio }}</td>
-                            {% if r.serviciopaciente.persona.tipopaciente.tipopaciente == 'BEBE' %}
-                                <td>{{ r.serviciopaciente.servicio.dosismgy.bebe }}</td>
-                            {% elif r.serviciopaciente.persona.tipopaciente.tipopaciente == 'NIÑO' %}
-                                <td>{{ r.serviciopaciente.servicio.dosismgy.nino }}</td>
-                            {% elif r.serviciopaciente.persona.tipopaciente.tipopaciente == 'ADULTO' %}
-                                <td>{{ r.serviciopaciente.servicio.dosismgy.adulto }}</td>
-                            {% elif r.serviciopaciente.persona.tipopaciente.tipopaciente == 'ADULTO OBESO' %}
-                                <td>{{ r.serviciopaciente.servicio.dosismgy.adultoobeso }}</td>
+            <form name="form-lectura" method="post" action="guardar_lectura">
+            {% csrf_token %}
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover">
+                        <thead>
+                            <tr>
+                                <th>Nombre</th>
+                                <th>N° de identificación</th>
+                                <th>Fecha</th>
+                                <th>N° de orden</th>
+                                <th>Entidad</th>
+                                <th>Servicio</th>
+                                <th>Profesional</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% for r in registros %}
+                            <tr>
+                            {% if r.leido  == True %}
                             {% else %}
-                                <td>No encontrado</td>
+                                <td style="display: none"><input name="id" value="{{ r.id }}"/></td>
+                                <td>{{ r.serviciopaciente.persona.nombre }} {{ r.serviciopaciente.persona.apellido }}</td>
+                                <td>{{ r.serviciopaciente.persona.identificacion }}</td>
+                                <td>{{ r.fecha |date:"d/m/Y" }}</td>
+                                <td>{{ r.numinterno }}</td>
+                                <td>{{ r.entidad.entidad }}</td>
+                                <td>{{ r.serviciopaciente.servicio.servicio }}</td>
+                                <td>
+                                    <select style="font-size: xx-small" class="form-control" name="profesional" required >
+                                        <option value="">Seleccione</option>
+                                        {% for p in profesional %}
+                                            <option value="{{ p.id }}">{{ p.profesional }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </td>
+                                <td style="display: none"><input name="tecnico" value="{{ user.id }}"></td>
                             {% endif %}
-                            <td>{{ r.area.area }}</td>
-                            <td>{{ r.entidad.entidad }}</td>
-                        </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
-            </div>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="col-sm-12">
+                    <button class="btn btn-success btn-lg">Guardar</button>
+                </div>
+            </form>
         </div>
     </div>
     <div class="margen-froter"></div>

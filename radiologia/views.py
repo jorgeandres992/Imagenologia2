@@ -1,12 +1,11 @@
 # -*- encoding: utf-8 -*-
 from datetime import datetime,date
-from django.conf import settings
 from django.contrib.auth.decorators import login_required
-from django.http import response
+from django.db import transaction
 from django.http.response import HttpResponseRedirect, HttpResponse
-from django.shortcuts import render, render_to_response, redirect
-from django.template import RequestContext, Context
-from django.contrib.auth.models import User, Group
+from django.shortcuts import render, render_to_response
+from django.template import RequestContext
+from django.contrib.auth.models import Group
 from django.contrib.auth import login as auth_login, logout as auth_logout
 from .models import *
 from django.contrib.auth.hashers import make_password
@@ -68,7 +67,14 @@ def radiologia(request):
 @login_required(login_url='/')
 def lectura(request):
     if request.user.groups.filter(id = 1).exists() or request.user.groups.filter(id = 3).exists() or request.user.groups.filter(id = 5).exists():
-        return render_to_response('radiologia/lectura.html', context_instance = RequestContext(request))
+        ind = 0
+        resp = 'Seleccione el rango de fechas para realizar la consulta'
+        if request.session.has_key('lectura'):
+            ind = 2
+            resp = request.session.get('lectura')
+            del request.session['lectura']
+
+        return render_to_response('radiologia/lectura.html',{'ind':ind, 'resp':resp}, context_instance = RequestContext(request))
     else:
          return HttpResponseRedirect('/menu')
 @login_required(login_url='/')
@@ -126,6 +132,32 @@ def inventario(request):
          return HttpResponseRedirect('/menu')
 
 @login_required(login_url='/')
+def etiquetas(request):
+    resp = request.GET['resp']
+    if resp == '':
+        resp = 'Favor complete los campos para continuar'
+
+    fecha_actual = date.today()
+    registros = Radiologia.objects.filter(fecha= fecha_actual)
+    return render_to_response('radiologia/reimpresion.html',{'registros':registros, 'resp':resp}, context_instance = RequestContext(request))
+
+@login_required(login_url='/')
+def reimpresion(request):
+    validator = ValidatorGet(request.GET)
+    validator.required = ['consecutivo']
+
+    if validator.is_valid():
+        registro  = Radiologia.objects.get(id= request.GET['consecutivo'])
+        fecha = str(registro.fecha)
+        etiqueta = {'nombre':registro.serviciopaciente.persona.nombre, 'apellido':registro.serviciopaciente.persona.apellido, 'genero':registro.serviciopaciente.persona.genero, 'tipoid':registro.serviciopaciente.persona.tipoid.tipoid, 'identificacion':registro.serviciopaciente.persona.identificacion, 'servicio':registro.serviciopaciente.servicio.servicio,'fecha':fecha, 'tecnico': (registro.tecnico.first_name + ' ' + registro.tecnico.last_name) }
+
+        request.session['etiqueta'] = etiqueta
+        return HttpResponseRedirect('/generar_pdf')
+    else:
+        resp = validator._message
+        return HttpResponseRedirect('/etiquetas/?resp='+resp)
+
+@login_required(login_url='/')
 def infoecografia(request):
     return render_to_response('informes/informe_ecografia.html', context_instance = RequestContext(request))
 
@@ -178,7 +210,6 @@ def guardarusuario(request):
         else:
             output = { 'resp': validator.getMessage(), 'indicador':0 }
             return HttpResponse(json.dumps(output),  content_type="application/json")
-        print validator.getMessage()
     else:
         return HttpResponseRedirect('/usuarios')
 
@@ -194,23 +225,26 @@ def guardarpersona(request):
                 output = { 'nombre': 0, "apellido": 0, "identificacion": usuario.identificacion, 'resp': 'El usuaruo ya existe, favor buscar de nuevo' }
                 return HttpResponse(json.dumps(output),  content_type="application/json")
             else:
-                persona = Persona()
-                persona.nombre = request.POST['nombre']
-                persona.apellido = request.POST['apellido']
-                persona.identificacion = request.POST['identificacion']
-                persona.edad = request.POST['edad']
-                persona.genero = request.POST['genero']
-                persona.tipoid = Tipoid.objects.get(id = request.POST['tipoid'])
-                persona.tipopaciente = Tipopaciente.objects.get(id = request.POST['tipopaciente'])
-                print request.POST['genero']
-                print persona.genero
-                print persona.edad
-                persona.save()
+                validator = Validator(request.POST)
+                validator.required = ['nombre', 'apellido','identificacion', 'fechanacimiento', 'genero', 'tipoid']
 
-                usuario = Persona.objects.get( identificacion = (request.POST['identificacion']))
-                output = { 'nombre': usuario.nombre, "apellido": usuario.apellido, "identificacion": usuario.identificacion, 'resp':0 }
+                if validator.is_valid():
+                    persona = Persona()
+                    persona.nombre = request.POST['nombre']
+                    persona.apellido = request.POST['apellido']
+                    persona.identificacion = request.POST['identificacion']
+                    persona.fechanacimiento = request.POST['fechanacimiento']
+                    persona.genero = request.POST['genero']
+                    persona.tipoid = Tipoid.objects.get(id = request.POST['tipoid'])
+                    persona.save()
 
-                return HttpResponse(json.dumps(output),  content_type="application/json")
+                    usuario = Persona.objects.get( identificacion = (request.POST['identificacion']))
+                    output = { 'nombre': usuario.nombre, "apellido": usuario.apellido, "identificacion": usuario.identificacion, 'resp':0 }
+
+                    return HttpResponse(json.dumps(output),  content_type="application/json")
+                else:
+                    output = { 'resp': validator.getMessage(), 'indicador':0 }
+                    return HttpResponse(json.dumps(output),  content_type="application/json")
 
 
 @login_required(login_url='/')
@@ -239,6 +273,7 @@ def guardarinventario(request):
             return HttpResponseRedirect("/inventario")
 
 @login_required(login_url='/')
+@transaction.atomic
 def guardarradiologia(request):
     if request.user.groups.filter(id = 3).exists() or request.user.groups.filter(id = 4).exists():
         return HttpResponseRedirect('/menu')
@@ -250,25 +285,33 @@ def guardarradiologia(request):
                 consum = placas[p].cantidadsuma
                 break
         etiqueta = None
-        if not consum <= 0 or consum is None:
+        if not consum < 0 or consum is None:
             if request.method == 'POST':
-                spaciente = cargue_servicio(request)#carga del servicio relacionandolo con el paciente
-                radiologia = Cargue_radiologia(request, spaciente)#carga de datos de la tabla principal
-                placas = request.POST.getlist('placausada')
-                cantidad = request.POST.getlist('cantusada')
-                consumible = Cargue_placas(radiologia, placas,cantidad, request,)#carga de las placas usadas
+                validator = FormRadiologiaValidator(request.POST)
+                validator.required = ['numinterno', 'kilovoltaje', 'miliamperaje', 'cantusada']
 
-                if not request.POST['placadanada'] == '':
-                    placas = request.POST.getlist('placadanada')
-                    cantidad = request.POST.getlist('cantdanada')
-                    consumibled = Cargue_placas(radiologia, placas,cantidad, request,)#carga de las placas danadas
-                tecnico = (radiologia.tecnico.first_name + ' '+radiologia.tecnico.last_name)
-                etiqueta = {'nombre':spaciente.persona.nombre, 'apellido':spaciente.persona.apellido, 'edad':spaciente.persona.edad, 'genero':spaciente.persona.genero, 'tipoid':spaciente.persona.tipoid.tipoid, 'identificacion':spaciente.persona.identificacion, 'servicio':spaciente.servicio.servicio,'fecha':radiologia.fecha, 'tecnico': tecnico}
+                if validator.is_valid():
+                    spaciente = cargue_servicio(request)#carga del servicio relacionandolo con el paciente
+                    radiologia = Cargue_radiologia(request, spaciente)#carga de datos de la tabla principal
+                    placas = request.POST.getlist('placausada')
+                    cantidad = request.POST.getlist('cantusada')
+                    consumible = Cargue_placas(radiologia, placas,cantidad, request,)#carga de las placas usadas
 
-            request.session['respuesta'] = "El registro ha sido creado exitosamente"
-            request.session['etiqueta'] = etiqueta
+                    if not request.POST['placadanada'] == '':
+                        placas = request.POST.getlist('placadanada')
+                        cantidad = request.POST.getlist('cantdanada')
+                        consumibled = Cargue_placas(radiologia, placas,cantidad, request,)#carga de las placas danadas
+                    tecnico = (radiologia.tecnico.first_name + ' '+radiologia.tecnico.last_name)
+                    etiqueta = {'nombre':spaciente.persona.nombre, 'apellido':spaciente.persona.apellido, 'genero':spaciente.persona.genero, 'tipoid':spaciente.persona.tipoid.tipoid, 'identificacion':spaciente.persona.identificacion, 'servicio':spaciente.servicio.servicio,'fecha':radiologia.fecha, 'tecnico': tecnico}
 
-            return HttpResponseRedirect('/radiologia')
+                    request.session['respuesta'] = "El registro ha sido creado exitosamente"
+                    request.session['etiqueta'] = etiqueta
+
+                    return HttpResponseRedirect('/radiologia')
+                else:
+                    request.session['error'] = validator._message
+
+                    return HttpResponseRedirect('/radiologia')
         else:
             aviso = ("La placas del inventario se encuentran agotadas, por favor revise el inventario, EL REGISTRO NO SERA GUARDADO")
             request.session['error'] = aviso
@@ -301,6 +344,7 @@ def Cargue_placas(radiologia, placas, cantidad, request):
 def Cargue_radiologia(request, spaciente):
     radiologia = Radiologia()
     radiologia.area = Area.objects.get(id=request.POST['area'])
+    radiologia.tipopaciente = Tipopaciente.objects.get(id=request.POST['tipopaciente'])
     radiologia.fecha = request.POST['fecha']
     radiologia.hora = request.POST['hora']
     radiologia.entidad = Entidad.objects.get(id=request.POST['entidad'])
@@ -316,7 +360,6 @@ def Cargue_radiologia(request, spaciente):
     radiologia.tecnico = User.objects.get(id=request.POST['tecnico'])
     radiologia.kilovoltaje = request.POST['kilovoltaje']
     radiologia.miliamperaje = request.POST['miliamperaje']
-    radiologia.leido = 0
     radiologia.save()
     return radiologia
 
@@ -326,7 +369,6 @@ def cargue_servicio(request):
     spaciente.servicio = Servicio.objects.get(id=request.POST['servicio'])
     spaciente.persona = Persona.objects.get(identificacion=request.POST['numeroid'])
     spaciente.save()
-    print spaciente.servicio.servicio
     return spaciente
 
 
@@ -362,7 +404,45 @@ def guardarecografia(request):
         return HttpResponseRedirect("/ecografia")
 
 @login_required(login_url='/')
-def buscar_paciente(request, documento):
+def guardar_lectura(request):
+    if request.method == 'POST':
+        ids = request.POST.getlist('id')
+        profesional = request.POST.getlist('profesional')
+        tecnico = request.POST.getlist('tecnico')
+        i = 0
+        while i < len(ids):
+            lectura = Lectura()
+            lectura.fecha = date.today()
+            lectura.hora = datetime.now()
+            registro = Radiologia.objects.get(id = ids[i])
+            lectura.radiologia = registro
+            lectura.profesional = Profesional.objects.get(id = profesional[i])
+            lectura.usuario = User.objects.get(id=tecnico[i])
+            radiologia = Radiologia(registro.id)
+            radiologia.fecha =registro.fecha
+            radiologia.hora = registro.hora
+            radiologia.numinterno = registro.numinterno
+            radiologia.cantidadiopamidol = registro.cantidadiopamidol
+            radiologia.kilovoltaje = registro.kilovoltaje
+            radiologia.miliamperaje = registro.miliamperaje
+            radiologia.area = registro.area
+            radiologia.docint = registro.docint
+            radiologia.entidad = registro.entidad
+            radiologia.serviciopaciente = registro.serviciopaciente
+            radiologia.tecnico = registro.tecnico
+            radiologia.leido = True
+            radiologia.save()
+            lectura.save()
+            i = i + 1
+
+        verificacion_lectura = 'La confirmación de lectura se ha realizado correctamente'
+        request.session['lectura'] = verificacion_lectura
+        return HttpResponseRedirect("/lectura")
+
+
+@login_required(login_url='/')
+def buscar_paciente(request):
+    documento = request.GET['numid']
     try:
         usuario = Persona.objects.get( identificacion= documento)
         output = { 'nombre': usuario.nombre, "apellido": usuario.apellido}
@@ -372,11 +452,11 @@ def buscar_paciente(request, documento):
         output = {'error': 0}
         return HttpResponse(json.dumps(output),  content_type="application/json")
 
-
 @login_required(login_url='/')
 def buscar_servicio(request):
     codigo = request.GET['codigo']
-    persona_id = request.GET['persona']
+    tipo_paciente = request.GET['tipopaciente']
+
     try:
         if len(codigo) <= 2:
             servicio = Servicio.objects.get( id = codigo)
@@ -385,26 +465,23 @@ def buscar_servicio(request):
         else:
             servicio = None
 
-        persona = Persona.objects.get(identificacion = persona_id)
         codigoresp = servicio.codigo
         id = servicio.id
         servicios = servicio.servicio
         insumo = servicio.insumo
-        if persona.tipopaciente.tipopaciente == 'BEBE':
+        print tipo_paciente
+        if tipo_paciente == '1':
             dosismgy = servicio.dosismgy.bebe
-            print dosismgy
-        elif persona.tipopaciente.tipopaciente == 'NIÑO':
+        elif tipo_paciente == '2':
             dosismgy = servicio.dosismgy.nino
-            print dosismgy
-        elif persona.tipopaciente.tipopaciente == 'ADULTO':
+        elif tipo_paciente == '3':
             dosismgy = servicio.dosismgy.adulto
-            print dosismgy
-        elif persona.tipopaciente.tipopaciente == 'ADULTO OBESO':
+        elif tipo_paciente == '4':
             dosismgy = servicio.dosismgy.adultoobeso
-            print dosismgy
+        else:
+            dosismgy = 0.0
 
         output = {'id':id, "servicio": servicios, 'codigo':codigoresp, 'insumo':insumo, 'dosismgy':dosismgy}
-        print output
 
         return HttpResponse(json.dumps(output),  content_type="application/json")
     except Servicio.DoesNotExist:
@@ -413,8 +490,14 @@ def buscar_servicio(request):
 @login_required(login_url='/')
 def buscar_servicioeco(request, codigo):
     try:
-        servicio = Servicioeco.objects.get( codigo = codigo)
-        output = { "servicio": servicio.id}
+        if len(codigo) <= 2:
+            servicio = Servicioeco.objects.get( id = codigo)
+        elif len(codigo) == 6:
+            servicio = Servicioeco.objects.get( codigo = codigo)
+        else:
+            servicio = None
+
+        output = { "servicio": servicio.id, 'codigo':servicio.codigo}
         return HttpResponse(json.dumps(output),  content_type="application/json")
     except Persona.DoesNotExist:
         return HttpResponse("Servicio no encontrado")
@@ -435,23 +518,43 @@ def buscar_consulta_radiologia(request):
     respuesta = 'Consulta realizada con exito'
 
     return render_to_response('radiologia/consulta_rad.html', {'indicador':indicador, 'respuesta':respuesta, 'registros':registros}, context_instance = RequestContext(request))
+@login_required(login_url='/')
+def buscar_lectura(request):
+
+    registros = Radiologia.objects.filter(fecha__range=(request.POST['fechainicial'],request.POST['fechafinal']))
+    profesional = Profesional.objects.all()
+    ind = 1
+    cont = 0
+    for i in range(len(registros)):
+        if registros[i].leido == False:
+            cont = cont + 1
+
+    resp = ('La consulta se ha realizado con exito, se han encontrado '+str(cont)+ ' registros sin confirmación de lectura')
+
+    return render_to_response('radiologia/lectura.html', {'registros':registros,'profesional':profesional,'resp':resp,'ind':ind}, context_instance = RequestContext(request))
 
 @login_required(login_url='/')
 def generate_PDF(request):
     dato = None
     if request.session.has_key('etiqueta'):
         dato = request.session.get('etiqueta')
-        #del request.session['etiqueta']
+        del request.session['etiqueta']
 
-    if dato['genero'] == 'M':
-        genero = 'Masculino'
-    elif dato['genero'] == 'F':
-        genero = 'Femenino'
+        if dato['genero'] == 'M':
+            genero = 'Masculino'
+        elif dato['genero'] == 'F':
+            genero = 'Femenino'
 
-    fecha = datetime.strptime(dato['fecha'], "%Y-%m-%d").strftime("%d/%m/%Y")
-    template = get_template("reporte.html")
-    context = {"nombre":(dato['nombre']+' '+dato['apellido']), 'edad':(dato['edad']), 'genero':genero, 'fecha':fecha,"identificacion":(dato['tipoid'] +'.' + ' '+dato['identificacion']), 'servicio': dato['servicio'], 'tecnico':dato['tecnico']}
-    html = template.render(RequestContext(request, context))
-    response = HttpResponse(content_type='application/pdf')
-    HTML(string=html,base_url=request.build_absolute_uri()).write_pdf(response)
-    return response
+        persona = Persona.objects.get(identificacion=dato['identificacion'])
+        edad = (date.today().year - persona.fechanacimiento.year) -1
+        fecha = datetime.strptime(dato['fecha'], "%Y-%m-%d").strftime("%d/%m/%Y")
+
+        template = get_template("reporte.html")
+        context = {"nombre":(dato['nombre']+' '+dato['apellido']), 'edad':edad, 'genero':genero, 'fecha':fecha,"identificacion":(dato['tipoid'] +'.' + ' '+dato['identificacion']), 'servicio': dato['servicio'], 'tecnico':dato['tecnico']}
+        html = template.render(RequestContext(request, context))
+        response = HttpResponse(content_type='application/pdf')
+        HTML(string=html,base_url=request.build_absolute_uri()).write_pdf(response)
+
+        return response
+    else:
+        return HttpResponse("La etiqueta no ha podido ser generada")

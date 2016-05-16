@@ -4,484 +4,253 @@
     active
 {% endblock %}
 
-{% block content %}
-<div class="container initial">
-	<!-- Modal -->
-	<div id="nuevoModal" class="modal fade" role="dialog">
-		<div class="modal-dialog">
-			<!-- Modal content-->
-			<div class="modal-content">
-				<form class="form-horizontal" method="post" id="formguardar" action="guardarpersona" >
-					{% csrf_token %}
-					<div class="modal-header">
-						<button type="button" class="close" data-dismiss="modal">&times;</button>
-						<div class="col-sm-12 text-box">
-							<h2 class="modal-title">PACIENTE NUEVO</h2>
-						</div>
-					</div>
-					<div class="modal-body">
-						<div class="row">
-							<div class="col-sm-12">
-								<div class="form-group">
-									<div class="col-xs-3">
-										<label class="control-label">Nombres:</label>
-									</div>
-									<div class="col-xs-9">
-										<input class="form-control" name="nombre" type="varchar" required />
-									</div>
-								</div>
-								<div class="form-group">
-									<div class="col-xs-3">
-										<label class="control-label">Apellidos:</label>
-									</div>
-									<div class="col-xs-9">
-										<input class="form-control" name="apellido" type="text" placeholder="" required />
-									</div>
-								</div>
-								<div class="form-group">
-									<div class="col-xs-3">
-										<label class="control-label">Tipo de Id:</label>
-									</div>
-									<div class="col-xs-4">
-										<select class="form-control" name="tipoid" required>
-											<option value="">Seleccione</option>
-											{% for t in tipoid %}
-												<option value="{{ t.id }}">{{ t.tipoid }}</option>
-											{% endfor %}
-										</select>
-									</div>
-								</div>
-								<div class="form-group">
-									<div class="col-xs-3">
-										<label class="control-label">Número de Id:</label>
-									</div>
-									<div class="col-xs-9">
-										<input class="form-control" name="identificacion" id = "identificacion" type="text" placeholder="" required />
-									</div>
-								</div>
-                                <div class="form-group">
-                                    <div class="col-xs-3">
-                                        <label class="control-label">Edad:</label>
-                                    </div>
-                                    <div class="col-xs-2">
-                                        <input class="form-control" name="edad"/>
-                                    </div>
-                                    <div class="col-xs-2">
-                                        <label class="control-label">Genero</label>
-                                    </div>
-                                    <div class="col-xs-2">
-                                        <h6>Masculino<input type="radio" name='genero' value="M" class="form-control" ></h6>
-                                    </div>
-                                    <div class="col-xs-2">
-                                        <h6>Femenino<input type="radio" name='genero' value="F" class="form-control" ></h6>
-                                    </div>
-                                </div>
-								<div class="form-group">
-									<div class="col-xs-3">
-										<label class="control-label">Tipo paciente:</label>
-									</div>
-									<div class="col-xs-9">
-										<select class="form-control" name="tipopaciente" required>
-											<option value="">Seleccione</option>
-											{% for p in tipopaciente %}
-												<option value="{{ p.id }}">{{ p.tipopaciente }}</option>
-											{% endfor %}
-										</select>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-					<div class="modal-footer">
-						<button id="find2" type="submit" class="btn btn-default">Guardar</button>
-					</div>
-				</form>
-			</div>
-		</div>
-	</div>
-</div>
+{% block reloj %}
+    onload=" mueveReloj()"
+{% endblock %}
 
-<div class="container-fluid">
-	<div class="row">
-		<div class="col-xs-12 col-lg-12">
-			<h1 class="page-header">
-				REGISTROS 
-				<small>RADIOLOGIA</small>
-			</h1>
-			<ol class="breadcrumb">
-				<li>
-					<i class="fa fa-dashboard"></i>  <a href="/menu">Inicio</a>
-				</li>
-				<li>
-					<i class="fa fa-folder-open"></i> Radiologia
-				</li>
-				<li class="active">
-					<i class="fa fa-file"></i> Registros
-				</li>
-			</ol>
-		</div>
-    <!-- /.row -->
-        <div class="col-lg-12">
-        {% if ind == 1 %}
-                <div class="alert alert-success fade in" id="respuesta">
+{% block content %}
+    {% include "personas.html" %}
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xs-12 col-lg-12">
+                <h1 class="page-header">
+                    REGISTROS
+                    <small>RADIOLOGIA</small>
+                </h1>
+                <ol class="breadcrumb">
+                    <li>
+                        <i class="fa fa-dashboard"></i>  <a href="/menu">Inicio</a>
+                    </li>
+                    <li>
+                        <i class="fa fa-folder-open"></i> Radiologia
+                    </li>
+                    <li class="active">
+                        <i class="fa fa-file"></i> Registros
+                    </li>
+                </ol>
+            </div>
+        <!-- /.row -->
+            <div class="col-lg-12">
+            {% if ind == 1 %}
+                <div class="alert alert-success fade in" id="resp-success">
                     <i class="fa fa-info-circle"></i> <strong>  {{ resp }}</strong>
-        {% elif ind == 0 %}
+                    <a class="btn btn-success" id="imprimir" target="blank" href="/generar_pdf">Imprimir Etiqueta</a>
+            {% elif ind == 0 %}
                 <div class="alert alert-danger fade in" id="respuesta">
                     <i class="fa fa-close"></i> <strong>  {{ resp }}</strong>
-        {% else %}
+            {% else %}
                 <div class="alert alert-info fade in" id="respuesta">
                     <i class="fa fa-info-circle"></i> <strong>  {{ resp }}</strong>
-        {% endif %}
+            {% endif %}
                 </div>
             </div>
-	<!-- /.row -->
-		<div class="col-lg-12">
-			<div class="row">
-				<form class="form-horizontal" method="post" action="guardarradiologia">
-                {% csrf_token %}
-					<div class="col-xs-12 row form-group">
-						<div class="col-xs-1">								
-							<label>Número de Id:</label>
-						</div>
-                        <div class="col-xs-3">
-                            <div class="input-group">
-                              <input name="numeroid" id="numid" class="form-control" type="varchar" required />
-                              <span class="input-group-btn">
-                                <button id="find" class="btn btn-default" type="button">Buscar</button>
-                              </span>
+        <!-- /.row -->
+            <div class="col-lg-12">
+                <div class="row">
+                    <form class="form-horizontal" id="form-radiologia" name="form-radiologia" method="post" action="guardarradiologia">
+                    {% csrf_token %}
+                        <div class="col-xs-12 row form-group">
+                            <div class="col-xs-1">
+                                <label>Número de Id:</label>
+                            </div>
+                            <div class="col-xs-3">
+                                <div class="input-group">
+                                  <input name="numeroid" id="numid" class="form-control" type="varchar" required />
+                                  <span class="input-group-btn">
+                                    <button id="find" class="btn btn-default" type="button">Buscar</button>
+                                  </span>
+                                </div>
+                            </div>
+                            <div class="col-xs-1">
+                                <button class="btn btn-primary" href="#" type="button" data-toggle="modal" data-target="#nuevoModal">
+                                    Nuevo <span class="glyphicon glyphicon-floppy-saved" aria-hidden="true"></span>
+                                </button>
+                            </div>
+                            <div class="col-xs-6 usuario">
+                                <h3><div id="nombres" ></div></h3>
                             </div>
                         </div>
-						<div class="col-xs-1">
-							<a href="#" type="button" data-toggle="modal" data-target="#nuevoModal">
-								<span class="glyphicon glyphicon-floppy-open" aria-hidden="true"></span> Nuevo 
-							</a>
-						</div>									
-						<div class="col-xs-6 usuario">
-							<h3><div id="nombre" ></div> <small><div id="tpaciente"></div></small></h3>
-						</div>
-					</div>
-					<div class="col-xs-12 form-group seccion">
-						<div class="row">
-							<div class="col-md-12">								
-								<div class="col-sm-12 form-group">
-                                    <div class="col-sm-1">
-                                        <label>Área:</label>
-                                    </div>
-                                    <div class="col-sm-3">
-                                        <select class="form-control" id="area" name="area" required>
-                                            <option value="">Seleccione</option>
-                                            {% for area in area %}
-                                            <option value="{{ area.id }}">{{ area.area }}</option>
-                                            {% endfor %}
-                                        </select>
+                        <div class="col-xs-12 form-group seccion">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="col-sm-12 form-group">
+                                        <div class="col-xs-1">
+                                            <label>Tipo paciente:</label>
+                                        </div>
+                                        <div class="col-xs-3">
+                                            <select class="form-control" id="tipopaciente" name="tipopaciente" required>
+                                                <option value="">Seleccione</option>
+                                                {% for p in tipopaciente %}
+                                                    <option value="{{ p.id }}">{{ p.tipopaciente }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                        <div class="col-md-1">
+                                            <label>Fecha:</label>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <input name="fecha" id="fecha" class="form-control fecha" type="text" required />
+                                        </div>
+                                        <div class="col-md-1">
+                                            <label>Hora:</label>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <input name="hora" id="hora" class="form-control" type="text" required />
+                                        </div>
                                     </div>
 
-                                    <div class="col-md-1">
-                                        <label>Fecha:</label>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <input name="fecha" id="fecha" class="form-control" type="text" required />
-                                    </div>
-                                    <div class="col-md-1">
-                                        <label>Hora:</label>
-                                    </div>
-                                    <div class="col-md-2">
-                                        <input name="hora" id="hora" class="form-control" type="text" required />
-                                    </div>
-								</div>
-								
-								<div class="col-xs-12 form-group">
-									<div class="col-md-1">
-										<label>Entidad:</label>
-									</div>
-									<div class="col-md-11">
-										<select class="form-control" name="entidad" required >
-											<option value="">Seleccione</option>
-											{% for e in entidad %}
-											<option value="{{ e.id }}">{{ e.entidad }}</option>
-											{% endfor %}
-										</select>
-									</div>
-								</div>
-                                <div class="col-xs-12 form-group">
-									<div class="col-md-1">
-										<label>Servicio:</label>
-									</div>
-									<div class="col-md-2">
-                                        <div class="input-group">
-                                            <input class="form-control" id="codigo" name="codigo" />
-                                            <span class="input-group-btn">
-                                                <button id="codservicio" class="btn btn-default" type="button">Buscar</button>
-                                            </span>
-                                        </div>
-									</div>
-									<div class="col-md-9">
-										<select class="form-control" id="servicio" name="servicio" required>
-											<option value="">Seleccione</option>
-											{% for s in servicio %}
-											<option value="{{ s.id }}">{{ s.servicio }}</option>
-											{% endfor %}
-										</select>
-									</div>
-								</div>
-								<div  class="col-xs-12 form-group">
-									<div class="col-xs-1">
-										<label>Doc.Interno:</label>
-									</div>
-									<div class="col-xs-3">
-										<select class="form-control" id="docint" name="docinterno" required>
-											<option value="">Seleccione</option>
-											{% for doc in docint %}
-											<option value="{{ doc.id }}">{{ doc.docint }}</option>
-											{% endfor %}
-										</select>
-									</div>
-									<div class="col-xs-1">
-										<label>Número:</label>
-									</div>
-									<div class="col-xs-2">
-										<input class="form-control" name="numinterno" type="text" placeholder="" required />
-									</div>
-                                    <div id="insumo">
-                                        <div class="col-xs-2">
-                                            <label>Cantidad iopamidol:</label>
-                                        </div>
-                                        <div class="col-xs-2">
-                                            <input class="form-control" id="insumo" name="insumo" type="text" />
-                                        </div>
+                                    <div class="col-xs-12 form-group">
                                         <div class="col-sm-1">
-										<input name="tecnico" value="{{ user.id }}" style="visibility:hidden" />
-									</div>
+                                            <label>Área:</label>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <select class="form-control" id="area" name="area" required>
+                                                <option value="">Seleccione</option>
+                                                {% for area in area %}
+                                                <option value="{{ area.id }}">{{ area.area }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                        <div class="col-md-1">
+                                            <label>Entidad:</label>
+                                        </div>
+                                        <div class="col-md-7">
+                                            <select class="form-control" name="entidad" required >
+                                                <option value="">Seleccione</option>
+                                                {% for e in entidad %}
+                                                <option value="{{ e.id }}">{{ e.entidad }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
                                     </div>
-								</div>
-                                <div  class="col-xs-12 form-group">
-                                    <div class="col-xs-1">
-										<label>Dosis Mgy:</label>
-									</div>
-									<div class="col-xs-1">
-										<input class="form-control" id="dosismgy" type="text" placeholder="" disabled />
-									</div>
-									<div class="col-xs-1">
-										<label>Kilovoltaje:</label>
-									</div>
-									<div class="col-xs-2">
-										<input class="form-control" name="kilovoltaje" type="" placeholder="" required />
-									</div>
-									<div class="col-xs-1">
-										<label>Miliamp:</label>
-									</div>
-									<div class="col-xs-2">
-										<input class="form-control" name="miliamperaje" type="" placeholder="" required />
-									</div>
-                                    <div class="col-xs-1">
-										<label>Tecnico:</label>
-									</div>
-                                    <div class="col-xs-3">
-                                        <input class="form-control" value="{{ user.first_name }} {{ user.last_name }}" disabled />
+                                    <div class="col-xs-12 form-group">
+                                        <div class="col-md-1">
+                                            <label>Servicio:</label>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <div class="input-group">
+                                                <input class="form-control" id="codigo" name="codigo" />
+                                                <span class="input-group-btn">
+                                                    <button id="codservicio" class="btn btn-default" type="button">Buscar</button>
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-9">
+                                            <select class="form-control" id="servicio" name="servicio" required>
+                                                <option value="">Seleccione</option>
+                                                {% for s in servicio %}
+                                                <option value="{{ s.id }}">{{ s.servicio }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
                                     </div>
-
-								</div>
-
-								<div class="container initial">
-								<!--contenido modal-->
-									<div id="placa-usadaModal" class="modal fade" role="dialog">
-										<div class="modal-dialog">
-											<!-- Modal content-->
-											<div class="modal-content">
-												<div class="modal-header">
-													<button type="button" class="close" data-dismiss="modal">&times;</button>
-													<div class="col-sm-12 text-box">
-														<h2 class="modal-title">PLACAS USADAS</h2>
-													</div>
-												</div>
-												<div class="modal-body">
-													<div class="row">
-														<ol id="placas-usadas">
-															<div class="col-xs-12 form-group">
-																<div class="col-xs-2">
-																	<label class="control-label">Tipo de placa:</label>
-																</div>
-																<div class="col-xs-4">
-																	<select class="form-control" name="placausada" required>
-																		<option value="">Seleccione</option>
-																		{% for p in placa %}
-																		<option value="{{ p.id }}">{{ p.consumible }}</option>
-																		{% endfor %}
-																	</select>
-																</div>
-																<div class="col-xs-2">
-																	<label class="control-label">Cantidad:</label>
-																</div>
-																<div class="col-xs-3">
-																	<input class="form-control" name="cantusada" type="interger" required />
-																</div>
-																<div class="col-xs-1">
-																	<span><a href="#" onclick="agregarusadas();"><i class="fa fa-plus-square fa-2x"></i></a></span>
-																</div>
-															</div>
-														</ol>
-													</div> 
-												</div>
-												<div class="modal-footer">
-													<button href="#" type="button" class="btn btn-default" data-dismiss="modal">Guardar</button>
-												</div>	
-											</div>
-										</div>
-									</div>
-								<!--fin de modal-->
-								</div>
-								<div class="container initial">
-								<!--contenido modal-->
-									<div id="placa-danadaModal" class="modal fade" role="dialog">
-										<div class="modal-dialog">
-											<!-- Modal content-->
-											<div class="modal-content">
-												<div class="modal-header">
-													<button type="button" class="close" data-dismiss="modal">&times;</button>
-													<div class="col-sm-12 text-box">
-														<h2 class="modal-title">PLACAS DAÑADAS</h2>
-													</div>
-												</div>
-												<div class="modal-body">
-													<div class="row">
-														<ol id="placas-danadas">
-															<div class="col-xs-12 form-group">
-																<div class="col-xs-2">
-																	<label class="control-label">Tipo de placa:</label>
-																</div>
-																<div class="col-xs-4">
-																	<select class="form-control" name="placadanada">
-																		<option value="">Seleccione</option>
-																		{% for pl in placa %}
-																		<option value="{{ pl.id }}">{{ pl.consumible }}</option>
-																		{% endfor %}
-																	</select>
-																</div>
-																<div class="col-xs-2">
-																	<label class="control-label">Cantidad:</label>
-																</div>
-																<div class="col-xs-3">
-																	<input class="form-control" name="cantdanada" type="interger" />
-																</div>
-																<div class="col-xs-1">
-																	<span><a href="#" onclick="agregardanadas();"><i class="fa fa-plus-square fa-2x"></i></a></span>
-																</div>
-															</div>
-														</ol>
-													</div> 
-												</div>
-												<div class="modal-footer">
-													<button href="#" type="button" class="btn btn-default" data-dismiss="modal">Guardar</button>
-												</div>	
-											</div>
-										</div>
-									</div>
-								<!--fin de modal-->
-								</div>
-								<div class="col-xs-12">									
-									<div class="col-sm-3 form-group">
-										<a href="#" type="button" data-toggle="modal" data-target="#placa-usadaModal">
-											Placas Usadas  
-											<span class="fa fa-file"></span>
-										</a>
-									</div>
-									<div class="col-sm-3 form-group">
-										<a href="#" type="button" data-toggle="modal" data-target="#placa-danadaModal">
-											Placas Dañadas    
-											<i class="fa fa-file"></i>
-										</a>
-									</div>									
-								</div>								
-								<div class="col-sm-12">
-									<button class="btn btn-default" id="imprimir" type="submit">Guardar</button>
-                                    <a class="btn btn-default" target="blank" href="/generar_pdf">Imprimir</a>
-								</div>								
-							</div>
-						</div>
-					</div>
-				</form>		
-			</div>
-		</div>
-	</div>
-</div>
-<div class="container-fluid">
-	<div class="col-md-12">
-		<div class="table-responsive">
-			<table class="table table-bordered table-hover">
-				<thead>
-					<tr>
-						<th>Nombre</th>
-						<th>N° de identificación</th>
-						<th>Hora</th>
-						<th>Servicio</th>
-						<th>Area</th>
-						<th>Entidad</th>
-					</tr>
-				</thead>
-				<tbody>
-                {% for r in registros %}
-					<tr>
-						<td>{{ r.serviciopaciente.persona.nombre }} {{ r.serviciopaciente.persona.apellido }}</td>
-						<td>{{ r.serviciopaciente.persona.identificacion }}</td>
-                        <td>{{ r.hora }}</td>
-						<td>{{ r.serviciopaciente.servicio.servicio }}</td>
-						<td>{{ r.area.area }}</td>
-						<td>{{ r.entidad.entidad }}</td>
-					</tr>
-                {% endfor %}
-				</tbody>
-			</table>
-		</div>
-	</div>
-</div>
-<div class="margen-froter"></div>
-<script>
-    function agregarusadas() {
-        campo = '<div class="col-xs-12 form-group"> \
-                    <div class="col-xs-2"> \
-                        <label class="control-label">Tipo de placa:</label> \
-                    </div> \
-                    <div class="col-xs-4"> \
-                        <select class="form-control" name="placausada" required> \
-                            <option value="">Seleccione</option> \
-                            {% for p in placa %} \
-                            <option value="{{ p.id }}">{{ p.consumible }}</option> \
-                            {% endfor %} \
-                        </select> \
-                    </div> \
-                    <div class="col-xs-2"> \
-                        <label class="control-label">Cantidad:</label> \
-                    </div> \
-                    <div class="col-xs-3"> \
-                        <input class="form-control" name="cantusada" type="interger" required /> \
-                    </div> \
-                    <div class="col-xs-1"></div> \
-                </div>';
-        $("#placas-usadas").append(campo);
-    }
-
-    function agregardanadas() {
-        campo = '<div class="col-xs-12 form-group"> \
-                    <div class="col-xs-2"> \
-                        <label class="control-label">Tipo de placa:</label> \
-                    </div> \
-                    <div class="col-xs-4"> \
-                        <select class="form-control" name="placadanada"> \
-                            <option value="">Seleccione</option> \
-                            {% for pl in placa %} \
-                            <option value="{{ pl.id }}">{{ pl.consumible }}</option> \
-                            {% endfor %} \
-                        </select> \
-                    </div> \
-                    <div class="col-xs-2"> \
-                        <label class="control-label">Cantidad:</label> \
-                    </div> \
-                    <div class="col-xs-3"> \
-                        <input class="form-control" name="cantdanada" type="interger" /> \
-                    </div> \
-                    <div class="col-xs-1"></div> \
-                </div>';
-        $("#placas-danadas").append(campo);
-    }
-</script>
+                                    <div  class="col-xs-12 form-group">
+                                        <div class="col-xs-1">
+                                            <label>Doc.Interno:</label>
+                                        </div>
+                                        <div class="col-xs-3">
+                                            <select class="form-control" id="docint" name="docinterno" required>
+                                                <option value="">Seleccione</option>
+                                                {% for doc in docint %}
+                                                <option value="{{ doc.id }}">{{ doc.docint }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                        <div class="col-xs-1">
+                                            <label>Número:</label>
+                                        </div>
+                                        <div class="col-xs-2">
+                                            <input class="form-control" id="numinterno" name="numinterno" maxlength="8" type="text" placeholder="" required />
+                                        </div>
+                                        <div id="insumo">
+                                            <div class="col-xs-2">
+                                                <label>Cantidad iopamidol:</label>
+                                            </div>
+                                            <div class="col-xs-2">
+                                                <input class="form-control" id="insumo" name="insumo" type="text" />
+                                            </div>
+                                            <div class="col-sm-1">
+                                            <input name="tecnico" value="{{ user.id }}" style="visibility:hidden" />
+                                        </div>
+                                        </div>
+                                    </div>
+                                    <div  class="col-xs-12 form-group">
+                                        <div class="col-xs-1">
+                                            <label>Dosis Mgy:</label>
+                                        </div>
+                                        <div class="col-xs-1">
+                                            <input class="form-control" id="dosismgy" type="text" placeholder="" readonly />
+                                        </div>
+                                        <div class="col-xs-1">
+                                            <label>Kilovoltaje:</label>
+                                        </div>
+                                        <div class="col-xs-2">
+                                            <input class="form-control"  id="kilovoltaje" name="kilovoltaje" maxlength="3" type="" placeholder="" required />
+                                        </div>
+                                        <div class="col-xs-1">
+                                            <label>Miliamp:</label>
+                                        </div>
+                                        <div class="col-xs-2">
+                                            <input class="form-control" id="miliamperaje" name="miliamperaje" maxlength="4" type="" placeholder="" required />
+                                        </div>
+                                    </div>
+                                    {% include "radiologia/placas.html" %}
+                                    <div class="col-sm-12">
+                                        <div class="btn-group" data-toggle="buttons">
+                                            <button class="btn btn-info" href="#" id="placausada_btn" type="button" data-toggle="modal" data-target="#placa-usadaModal">
+                                                Placas Usadas
+                                                <span class="glyphicon glyphicon-ok"></span>
+                                            </button>
+                                            <button class="btn btn-danger" href="#" type="button" data-toggle="modal" data-target="#placa-danadaModal">
+                                                Placas Dañadas
+                                                <i class="glyphicon glyphicon-remove"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-12 seccion">
+                                        <div class="col-sm-10"></div>
+                                        <div class="col-sm-2">
+                                            <button id="guardar" class="btn btn-success btn-lg btn-block" type="submit">Guardar</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container-fluid">
+        <div class="col-md-12">
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>N° de identificación</th>
+                            <th>Hora</th>
+                            <th>Servicio</th>
+                            <th>Area</th>
+                            <th>Entidad</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for r in registros %}
+                        <tr>
+                            <td>{{ r.serviciopaciente.persona.nombre }} {{ r.serviciopaciente.persona.apellido }}</td>
+                            <td>{{ r.serviciopaciente.persona.identificacion }}</td>
+                            <td>{{ r.hora }}</td>
+                            <td>{{ r.serviciopaciente.servicio.servicio }}</td>
+                            <td>{{ r.area.area }}</td>
+                            <td>{{ r.entidad.entidad }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="margen-froter"></div>
+    {% include "radiologia/campos_placas.html" %}
 {% endblock %}

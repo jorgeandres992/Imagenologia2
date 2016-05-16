@@ -4,7 +4,7 @@
         <title>Imagenologia - Etiqueta</title>
         <style>
         @page {
-            size: 11.5cm 3cm ;
+            size: 9.5cm 3cm ;
             margin: 0px;
             padding: 0px;
         }
@@ -19,26 +19,26 @@
             font-style: italic;
             font-size: 8px;
         }
-
         .text a {
-            font-weight: 100;
+            font-weight: 500;
         }
-
+        .logo{
+            width: 20px;
+        }
         table {
-            width: 530px;
+            width: 340px;
             height: auto;
-        }
-        .celda {
-            width: 2px;
+            font-family: Verdana;
         }
         .imagen {
-            width: 50px;
+            width: 10px;
+            text-align: start;
         }
-        .fecha_estudio {
-            width: 100px;
+        .celda{
+            font-size: 7px;
         }
-        .servicio{
-            width: 250px;
+        .celda2{
+            width: 300px;
         }
         .div2{
             float: left;
@@ -50,38 +50,30 @@
 
             <table border="1">
                 <tr>
-                    <td class="titulo" colspan="5">SOCIEDAD DE ESPECIALISTAS DE GIRARDOT S.A.S</td>
-                </tr>
-                <tr>
-                    <td class="titulo" colspan="5">SERVICIO DE IMAGENOLOGIA</td>
-                </tr>
-                <tr>
-                    <td rowspan="6" class="imagen">
-                        <img src="/static/img/logo.png">
+                    <td class="imagen">
+                        <img class="logo" src="/static/img/logo.png">
                     </td>
+                    <td class="titulo" colspan="3">SOCIEDAD DE ESPECIALISTAS DE GIRARDOT S.A.S<br>SERVICIO DE IMAGENOLOGIA<br><HR></td>
                 </tr>
                 <tr>
-                    <td class="text celda" colspan="1">Paciente:</td>
-                    <td class="text" colspan="4"><a>{{ nombre }}</a></td>
+                    <td class="text" colspan="4">Paciente:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a>{{ nombre }}</a></td>
                 </tr>
                 <tr>
-                    <td class="text" colspan="1">Edad: <a> {{ edad }} Años</a></td>
-                    <td class="text celda" colspan="1">Genero:<a> {{ genero }}</a></td>
-                    <td class="text fecha_estudio" colspan="">Fecha de Estudio: <a>{{ fecha }}</a></td>
+                    <td class="text" colspan="4">Identificación: <a>{{ identificacion }}</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Fecha de Estudio: <a>{{ fecha }}</a></td>
                 </tr>
                 <tr>
-                    <td class="text" colspan="1">Identificación:</td>
-                    <td class="text" colspan="1"><a>{{ identificacion }}</a></td>
-                    <td class="text" colspan="2">Tecnico: <a>{{ tecnico }}</a></td>
+                    <td class="text" colspan="4">Edad: <a> {{ edad }} Años </a>&nbsp;&nbsp; Genero:<a> {{ genero }} </a>&nbsp;&nbsp;Tecnico: <a class="celda">{{ tecnico }}</a></td>
                 </tr>
                 <tr>
                     <td class="text" colspan="1">Estudio Realizado:</td>
-                    <td class="text servicio" colspan="2" style="font-size: 7px"><a>{{ servicio }}</a></td>
-                </tr>
-                <tr>
-
+                    <td class="celda" colspan="3"><a>{{ servicio }}</a></td>
                 </tr>
             </table>
         </div>
     </body>
 </html>
+
+<!--
+
+
+-->

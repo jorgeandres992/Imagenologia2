@@ -87,8 +87,6 @@ class Lectura(models.Model):
     fecha = models.DateField()
     hora = models.TimeField()
     radiologia = models.ForeignKey('Radiologia', models.DO_NOTHING)
-    lectura = models.IntegerField()
-    observacion = models.TextField(blank=True, null=True)
     profesional = models.ForeignKey('Profesional', models.DO_NOTHING)
     usuario = models.ForeignKey(User, models.DO_NOTHING)
 
@@ -101,9 +99,8 @@ class Persona(models.Model):
     apellido = models.CharField(max_length=60)
     tipoid = models.ForeignKey('Tipoid', models.DO_NOTHING)
     identificacion = models.CharField(max_length=20)
-    edad = models.IntegerField()
+    fechanacimiento = models.DateField()
     genero = models.CharField(max_length=1, choices=list_sexo)
-    tipopaciente = models.ForeignKey('Tipopaciente', models.DO_NOTHING)
 
     class Meta:
         db_table = 'PERSONA'
@@ -128,7 +125,9 @@ class Radiologia(models.Model):
     kilovoltaje = models.FloatField()
     miliamperaje = models.FloatField()
     tecnico = models.ForeignKey(User, models.DO_NOTHING)
+    tipopaciente = models.ForeignKey('Tipopaciente', models.DO_NOTHING)
     leido = models.BooleanField(default=0)
+    entrega = models.BooleanField(default=0)
 
     class Meta:
         db_table = 'RADIOLOGIA'

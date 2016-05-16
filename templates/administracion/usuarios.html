@@ -5,188 +5,111 @@
 {% endblock %}
 
 {% block content %}
-<div class="container initial">
-	<!-- Modal -->
-	<div id="nuevoModal" class="modal fade" role="dialog">
-		<div class="modal-dialog">
-			<!-- Modal content-->
-			<div class="modal-content">
-				<form class="form-horizontal" method="post" id="formguardar" action="guardarpersona" >
-					{% csrf_token %}
-					<div class="modal-header">
-						<button type="button" class="close" data-dismiss="modal">&times;</button>
-						<div class="col-sm-12 text-box">
-							<h2 class="modal-title">NUEVO USUARIO</h2>
-						</div>
-					</div>
-					<div class="modal-body">
-						<div class="row">
-							<div class="col-sm-12">
-								<div class="form-group">
-									<div class="col-xs-3">
-										<label class="control-label">Nombres:</label>
-									</div>
-									<div class="col-xs-9">
-										<input class="form-control" name="nombre" type="varchar" required />
-									</div>
-								</div>
-								<div class="form-group">
-									<div class="col-xs-3">
-										<label class="control-label">Apellidos:</label>
-									</div>
-									<div class="col-xs-9">
-										<input class="form-control" name="apellido" type="text" placeholder="" required />
-									</div>
-								</div>
-								<div class="form-group">
-									<div class="col-xs-3">
-										<label class="control-label">Tipo de Id:</label>
-									</div>
-									<div class="col-xs-4">
-										<select class="form-control" name="tipoid" required>
-											<option value="">Seleccione</option>
-											{% for t in tipoid %}
-												<option value="{{ t.id }}">{{ t.tipoid }}</option>
-											{% endfor %}
-										</select>
-									</div>
-								</div>
-								<div class="form-group">
-									<div class="col-xs-3">
-										<label class="control-label">Número de Id:</label>
-									</div>
-									<div class="col-xs-9">
-										<input class="form-control" name="identificacion" id = "identificacion" type="text" placeholder="" required />
-									</div>
-								</div>
-								<div class="form-group">
-									<div class="col-xs-3">
-										<label class="control-label">Tipo paciente:</label>
-									</div>
-									<div class="col-xs-9">
-										<select class="form-control" name="tipopaciente" required>
-											<option value="">Seleccione</option>
-											{% for p in tipopaciente %}
-												<option value="{{ p.id }}">{{ p.tipopaciente }}</option>
-											{% endfor %}
-										</select>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-					<div class="modal-footer">
-						<button type="submit" class="btn btn-default">Guardar</button>
-					</div>
-				</form>
-			</div>
-		</div>
-	</div>
-</div>
+    {% include "personas.html" %}
 
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-sm-12">
-            <h1 class="page-header">
-            ADMINISTRACIÓN
-            <small>USUARIOS DEL SISTEMA</small>
-            </h1>
-            <ol class="breadcrumb">
-                <li>
-                    <i class="fa fa-dashboard"></i>  <a href="/menu">Inicio</a>
-                </li>
-                <li>
-                    <i class="fa fa-cog"></i> Administración
-                </li>
-                <li class="active">
-                    <i class="fa fa-user"></i> Usuarios del sistema
-                </li>
-            </ol>
-        </div>
-    <!-- /.row -->
-        <div class="col-lg-12">
-            <div class="alert alert-info fade in" id="respuesta">
-                <i class="fa fa-info-circle"></i> <strong>   <label id="avisos">Formulario de creación de usuarios del sistema</label> </strong>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-12">
+                <h1 class="page-header">
+                ADMINISTRACIÓN
+                <small>USUARIOS DEL SISTEMA</small>
+                </h1>
+                <ol class="breadcrumb">
+                    <li>
+                        <i class="fa fa-dashboard"></i>  <a href="/menu">Inicio</a>
+                    </li>
+                    <li>
+                        <i class="fa fa-cog"></i> Administración
+                    </li>
+                    <li class="active">
+                        <i class="fa fa-user"></i> Usuarios del sistema
+                    </li>
+                </ol>
+            </div>
+        <!-- /.row -->
+            <div class="col-lg-12">
+                <div class="alert alert-info fade in" id="respuesta">
+                    <i class="fa fa-info-circle"></i> <strong>   <label id="avisos">Formulario de creación de usuarios del sistema</label> </strong>
+                </div>
+            </div>
+        <!-- /.row -->
+            <div class="col-sm-12 row">
+                <form class="form-horizontal" method="post" id="formusuario" action="guardarusuario" >
+                    {% csrf_token %}
+                    <div class="col-sm-12 form-group row">
+                        <div class="col-sm-12 form-group">
+                            <div class="col-sm-1">
+                                <label>Número de Id:</label>
+                            </div>
+                            <div class="col-sm-3">
+                                <div class="input-group">
+                                    <input name="numeroid" id="numid" class="form-control" type="varchar" required />
+                                    <span class="input-group-btn">
+                                        <button id="find" class="btn btn-default" type="button">Buscar</button>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="col-xs-1">
+                                <button class="btn btn-primary" href="#" type="button" data-toggle="modal" data-target="#nuevoModal">
+                                    Nuevo <span class="glyphicon glyphicon-floppy-saved" aria-hidden="true"></span>
+                                </button>
+                            </div>
+                            <div class="col-sm-7 usuario">
+                                <h3><div id="nombre" ></div></h3>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 form-group">
+                            <div class="col-sm-12 form-group">
+                                <div class="col-sm-1">
+                                    <label>Username:</label>
+                                </div>
+                                <div class="col-sm-5">
+                                    <input class="form-control" name="username" id="usern" type="text" required />
+                                </div>
+                            </div>
+                            <div class="col-sm-12 form-group">
+                                <div class="col-sm-1">
+                                    <label>Email:</label>
+                                </div>
+                                <div class="col-sm-5">
+                                    <input name="email" class="form-control" type="email" required />
+                                </div>
+                            </div>
+                            <div class="col-sm-12 form-group">
+                                <div class="col-sm-1">
+                                    <label style="font-size: 13px">Contraseña:</label>
+                                </div>
+                                <div class="col-sm-4">
+                                    <input name="password" class="form-control" type="password" required />
+                                </div>
+
+                                <div class="col-sm-2">
+                                    <label style="font-size: 13px">Repita la contraseña:</label>
+                                </div>
+                                <div class="col-sm-4">
+                                    <input name="rpassword"class="form-control" type="password" required />
+                                </div>
+                            </div>
+                            <div class="col-sm-12 form-group">
+                                <div class="col-sm-1">
+                                    <label>Perfil:</label>
+                                </div>
+                                <div class="col-xs-3">
+                                    <select class="form-control" name="perfil" required>
+                                        <option value="">Seleccione</option>
+                                        {% for p in perfil %}
+                                            <option value="{{ p.id }}">{{ p.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-xs-12">
+                                <button id="usuario" class="btn btn-success btn-lg" type="submit">Guardar</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
             </div>
         </div>
-	<!-- /.row -->
-	    <div class="col-sm-12 row">
-            <form class="form-horizontal" method="post" id="formusuario" action="guardarusuario" >
-                {% csrf_token %}
-                <div class="col-sm-12 form-group row">
-                    <div class="col-sm-12 form-group">
-                        <div class="col-sm-1">
-                            <label>Número de Id:</label>
-                        </div>
-                        <div class="col-sm-3">
-                            <div class="input-group">
-                                <input name="numeroid" id="numid" class="form-control" type="varchar" required />
-                                <span class="input-group-btn">
-                                    <button id="find" class="btn btn-default" type="button">Buscar</button>
-                                </span>
-                            </div>
-                        </div>
-                        <div class="col-sm-1">
-							<a href="#" type="button" data-toggle="modal" data-target="#nuevoModal">
-								<span class="glyphicon glyphicon-floppy-open" aria-hidden="true"></span> Nuevo
-							</a>
-						</div>
-                        <div class="col-sm-7 usuario">
-                            <h3><div id="nombre" ></div></h3>
-                        </div>
-                    </div>
-                    <div class="col-sm-12 form-group">
-                        <div class="col-sm-12 form-group">
-                            <div class="col-sm-1">
-                                <label>Username:</label>
-                            </div>
-                            <div class="col-sm-5">
-                                <input class="form-control" name="username" id="usern" type="text" required />
-                            </div>
-                        </div>
-                        <div class="col-sm-12 form-group">
-                            <div class="col-sm-1">
-                                <label>Email:</label>
-                            </div>
-                            <div class="col-sm-5">
-                                <input name="email" class="form-control" type="email" required />
-                            </div>
-                        </div>
-                        <div class="col-sm-12 form-group">
-                            <div class="col-sm-1">
-                                <label style="font-size: 13px">Contraseña:</label>
-                            </div>
-                            <div class="col-sm-4">
-                                <input name="password" class="form-control" type="password" required />
-                            </div>
-
-                            <div class="col-sm-2">
-                                <label style="font-size: 13px">Repita la contraseña:</label>
-                            </div>
-                            <div class="col-sm-4">
-                                <input name="rpassword"class="form-control" type="password" required />
-                            </div>
-                        </div>
-                        <div class="col-sm-12 form-group">
-                            <div class="col-sm-1">
-                                <label>Perfil:</label>
-                            </div>
-                            <div class="col-xs-3">
-                                <select class="form-control" name="perfil" required>
-                                    <option value="">Seleccione</option>
-                                    {% for p in perfil %}
-                                        <option value="{{ p.id }}">{{ p.name }}</option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-xs-12">
-                            <button id="usuario" class="btn btn-default" type="submit">Guardar</button>
-                        </div>
-                    </div>
-                </div>
-            </form>
-	    </div>
-	</div>
-</div>
+    </div>
 {% endblock %}
