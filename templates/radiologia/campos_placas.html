@@ -1,0 +1,49 @@
+<script>
+    function agregarusadas() {
+        campo = '<div class="col-xs-12 form-group"> \
+                    <div class="col-xs-2"> \
+                        <label class="control-label">Tipo de placa:</label> \
+                    </div> \
+                    <div class="col-xs-4"> \
+                        <select class="form-control" name="placausada" required> \
+                            <option value="">Seleccione</option> \
+                            {% for p in placa %} \
+                            <option value="{{ p.id }}">{{ p.consumible }}</option> \
+                            {% endfor %} \
+                        </select> \
+                    </div> \
+                    <div class="col-xs-2"> \
+                        <label class="control-label">Cantidad:</label> \
+                    </div> \
+                    <div class="col-xs-3"> \
+                        <input class="form-control" name="cantusada" type="interger" required /> \
+                    </div> \
+                    <div class="col-xs-1"></div> \
+                </div>';
+        $("#placas-usadas").append(campo);
+    }
+
+    function agregardanadas() {
+        campo = '<div class="col-xs-12 form-group"> \
+                    <div class="col-xs-2"> \
+                        <label class="control-label">Tipo de placa:</label> \
+                    </div> \
+                    <div class="col-xs-4"> \
+                        <select class="form-control" name="placadanada"> \
+                            <option value="">Seleccione</option> \
+                            {% for pl in placa %} \
+                            <option value="{{ pl.id }}">{{ pl.consumible }}</option> \
+                            {% endfor %} \
+                        </select> \
+                    </div> \
+                    <div class="col-xs-2"> \
+                        <label class="control-label">Cantidad:</label> \
+                    </div> \
+                    <div class="col-xs-3"> \
+                        <input class="form-control" name="cantdanada" type="interger" /> \
+                    </div> \
+                    <div class="col-xs-1"></div> \
+                </div>';
+        $("#placas-danadas").append(campo);
+    }
+</script>
