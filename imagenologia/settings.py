@@ -80,12 +80,12 @@ db_url = urlparse.urlparse(os.environ.get('OPENSHIFT_MYSQL_DB_URL'))
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': '',
-        'USER': '',
-        'PASSWORD': '',
-        'HOST': '',
-        'PORT': '',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'd8eo0c43vbsiia',
+        'USER': 'yzzyvlqsdmgqvv',
+        'PASSWORD': 'B6V32jrEgIw3S58GbZyWxyvWUi',
+        'HOST': 'ec2-54-225-246-33.compute-1.amazonaws.com',
+        'PORT': '5432',
         #'ENGINE': 'django.db.backends.sqlite3',
         #'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
