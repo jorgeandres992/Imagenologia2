@@ -79,9 +79,11 @@ WSGI_APPLICATION = 'imagenologia.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'imagenologia',
-        'USER': 'adminYMucCWt',
-        'PASSWORD': 'jpJV9EqkXg7y',
+        'NAME': os.environ['OPENSHIFT_APP_NAME'],
+        'USER': db_url.username,
+        'PASSWORD': db_url.password,
+        'HOST': db_url.hostname,
+        'PORT': db_url.port,
         #'ENGINE': 'django.db.backends.sqlite3',
         #'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
