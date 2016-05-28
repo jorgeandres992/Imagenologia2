@@ -11,6 +11,7 @@ httplib2
 lxml
 Pillow
 static
+psycopg2
 requests
 tinycss
 virtualenv
