@@ -15,7 +15,6 @@ httplib2==0.8
 lxml==3.3.3
 Pillow==2.3.0
 requests==2.2.1
-sessioninstaller==0.0.0
 six==1.5.2
 software-center-aptd-plugins==0.0.0
 tinycss==0.3
