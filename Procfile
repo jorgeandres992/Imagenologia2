@@ -1,1 +1,1 @@
-web: gunicorn english.wsgi
+web: gunicorn imagenologia.wsgi
