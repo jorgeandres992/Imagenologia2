@@ -10,6 +10,7 @@ html5lib
 httplib2
 lxml
 Pillow
+static
 requests
 tinycss
 virtualenv
