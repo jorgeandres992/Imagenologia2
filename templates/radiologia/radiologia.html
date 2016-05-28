@@ -32,9 +32,9 @@
         <!-- /.row -->
             <div class="col-lg-12">
             {% if ind == 1 %}
-                <div class="alert alert-success fade in" id="resp-success">
+                <div class="alert alert-success fade in" id="respost">
                     <i class="fa fa-info-circle"></i> <strong>  {{ resp }}</strong>
-                    <a class="btn btn-success" id="imprimir" target="blank" href="/generar_pdf">Imprimir Etiqueta</a>
+                    <a class="btn btn-success" id="imprimiretiqueta" >Imprimir Etiqueta</a>
             {% elif ind == 0 %}
                 <div class="alert alert-danger fade in" id="respuesta">
                     <i class="fa fa-close"></i> <strong>  {{ resp }}</strong>
@@ -135,13 +135,26 @@
                                                 </span>
                                             </div>
                                         </div>
-                                        <div class="col-md-9">
+                                        <div class="col-sm-6">
                                             <select class="form-control" id="servicio" name="servicio" required>
                                                 <option value="">Seleccione</option>
                                                 {% for s in servicio %}
-                                                <option value="{{ s.id }}">{{ s.servicio }}</option>
+                                                    <option value="{{ s.id }}">{{ s.servicio }}</option>
                                                 {% endfor %}
                                             </select>
+                                        </div>
+                                        <div id="lateralidad">
+                                            <div class="col-sm-1">
+                                                <label>Lateralidad:</label>
+                                            </div>
+                                            <div class="col-sm-2">
+                                                <select class="form-control" name="lateralidad">
+                                                    <option value="">Seleccione</option>
+                                                    {% for l in lateralidad %}
+                                                        <option value="{{ l.id }}">{{ l.lateralidad }}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
                                         </div>
                                     </div>
                                     <div  class="col-xs-12 form-group">
@@ -167,7 +180,7 @@
                                                 <label>Cantidad iopamidol:</label>
                                             </div>
                                             <div class="col-xs-2">
-                                                <input class="form-control" id="insumo" name="insumo" type="text" />
+                                                <input class="form-control" name="insumo" type="text" />
                                             </div>
                                             <div class="col-sm-1">
                                             <input name="tecnico" value="{{ user.id }}" style="visibility:hidden" />

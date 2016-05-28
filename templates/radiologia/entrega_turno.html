@@ -9,7 +9,7 @@ active
         <div class="row">
             <div class="col-lg-12">
                 <h1 class="page-header">
-                    LECTURA DE PLACAS
+                    ENTREGA PARA LECTURA
                     <small>RADIOLOGIA</small>
                 </h1>
                 <ol class="breadcrumb">
@@ -20,32 +20,32 @@ active
                         <i class="fa fa-folder-open"></i> Radiologia
                     </li>
                     <li class="active">
-                        <i class="fa fa-file"></i> Lectura de placas
+                        <i class="fa fa-file"></i> Entrega de placas
                     </li>
                 </ol>
             </div>
         </div>
     </div>
     <!-- /.row -->
-    <div class="col-lg-12">
-    {% if ind == 0 %}
+        <div class="col-lg-12">
+        {% if ind == 0 %}
             <div class="alert alert-info fade in" id="respuesta_lectura">
                 <i class="fa fa-info-circle"></i> <strong>  {{ resp }}</strong>
-    {% elif ind  == 1 or ind == 2 %}
+        {% elif ind == 1 or ind == 2 %}
             <div class="alert alert-success fade in" id="respuesta_lectura">
                 <i class="fa fa-info-circle"></i> <strong>  {{ resp }}</strong>
-    {% elif ind == 3 %}
+        {% elif ind == 3 %}
             <div class="alert alert-warning fade in" id="respuesta_lectura">
                 <i class="fa fa-info-circle"></i> <strong>  {{ resp }}</strong>
-    {% else %}
+        {% else %}
             <div class="alert alert-danger fade in" id="respuesta_lectura">
                 <i class="fa fa-close"></i> <strong>  Error inesperado, comuniquese con el administrador del sistema</strong>
-    {% endif %}
+        {% endif %}
             </div>
         </div>
 	<!-- /.row -->
     <div class="col-sm-12">
-        <form class="form-horizontal" method="post" action="buscarlectura">
+        <form class="form-horizontal" method="post" action="buscar_entrega_turno">
             {% csrf_token %}
             <div class="col-xs-12 row form-group">
                 <div class="col-sm-12">
@@ -71,45 +71,44 @@ active
     </div>
     <div class="container-fluid">
         <div class="col-md-12">
-            <form name="form-lectura" method="post" action="guardar_lectura">
+            <form name="form-lectura" method="post" action="guardar_entrega_turno">
             {% csrf_token %}
                 <div class="table-responsive">
                     <input name="tecnico" value="{{ user.id }}" style="display: none" />
                     <table class="table table-bordered table-hover">
                         <thead>
                             <tr>
-                                <th>Nombre</th>
-                                <th>N° de identificación</th>
-                                <th>Fecha</th>
-                                <th>N° de orden</th>
-                                <th>Entidad</th>
-                                <th>Servicio</th>
-                                <th>Profesional</th>
+                                <th rowspan="2">N° de orden</th>
+                                <th rowspan="2">Nombre</th>
+                                <th rowspan="2">N° de identificación</th>
+                                <th rowspan="2">Fecha</th>
+                                <th rowspan="2">Entidad</th>
+                                <th rowspan="2">Servicio</th>
+                                <th colspan="2">Entregar</th>
+                            </tr>
+                            <tr>
+                                <th>Si</th>
+                                <th>No</th>
                             </tr>
                         </thead>
                         <tbody>
-                        {% for r in registros %}
-                            <tr>
-                            {% if r.leido  == True %}
-                            {% else %}
-                                <td style="display: none"><input name="id" value="{{ r.id }}"/></td>
-                                <td style="font-size: 7pt">{{ r.serviciopaciente.persona.nombre }} {{ r.serviciopaciente.persona.apellido }}</td>
-                                <td>{{ r.serviciopaciente.persona.identificacion }}</td>
-                                <td>{{ r.fecha |date:"d/m/Y" }}</td>
-                                <td>{{ r.numinterno }}</td>
-                                <td>{{ r.entidad.entidad }}</td>
-                                <td>{{ r.serviciopaciente.servicio.servicio }}</td>
-                                <td>
-                                    <select style="font-size: xx-small" class="form-control" name="profesional">
-                                        <option value="">Seleccione</option>
-                                        {% for p in profesional %}
-                                            <option value="{{ p.id }}">{{ p.profesional }}</option>
-                                        {% endfor %}
-                                    </select>
-                                </td>
-                            {% endif %}
-                            </tr>
-                        {% endfor %}
+                            {% for r in registros %}
+                                <tr>
+                                    <td style="display: none"><input name="id{{ forloop.counter0 }}" value="{{ r.id }}"/></td>
+                                    <td>{{ r.numinterno }}</td>
+                                    <td>{{ r.serviciopaciente.persona.nombre }} {{ r.serviciopaciente.persona.apellido }}</td>
+                                    <td>{{ r.serviciopaciente.persona.identificacion }}</td>
+                                    <td>{{ r.fecha |date:"d/m/Y" }}</td>
+                                    <td>{{ r.entidad.entidad }}</td>
+                                    <td>{{ r.serviciopaciente.servicio.servicio }}</td>
+                                    <td>
+                                        <input class="form-control" name="confirmacion{{ forloop.counter0 }}" value="SI" type="radio" />
+                                    </td>
+                                    <td>
+                                        <input class="form-control" name="confirmacion{{ forloop.counter0 }}" value="NO" type="radio" />
+                                    </td>
+                                </tr>
+                            {% endfor %}
                         </tbody>
                     </table>
                 </div>

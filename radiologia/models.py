@@ -83,6 +83,27 @@ class Inventario(models.Model):
         db_table = 'INVENTARIO'
 
 
+class Entrega_Placa(models.Model):
+    fecha = models.DateField()
+    hora = models.TimeField()
+    persona_entrega = models.CharField(max_length=60)
+    tipoid = models.ForeignKey('Tipoid', models.DO_NOTHING)
+    identificacion = models.CharField(max_length=20)
+    telefono = models.CharField(max_length=20)
+    usuario = models.ForeignKey(User, models.DO_NOTHING)
+
+    class Meta:
+        db_table = 'ENTREGA_PLACA'
+
+
+
+class Lateralidad(models.Model):
+    lateralidad = models.CharField(max_length=20)
+
+    class Meta:
+        db_table = 'LATERALIDAD'
+
+
 class Lectura(models.Model):
     fecha = models.DateField()
     hora = models.TimeField()
@@ -128,20 +149,33 @@ class Radiologia(models.Model):
     tipopaciente = models.ForeignKey('Tipopaciente', models.DO_NOTHING)
     leido = models.BooleanField(default=0)
     entrega = models.BooleanField(default=0)
+    check = models.BooleanField(default=0)
+    archivo = models.BooleanField(default=0)
 
     class Meta:
         db_table = 'RADIOLOGIA'
+
+
+class Entrega_Turno(models.Model):
+    fecha = models.DateField()
+    hora = models.TimeField()
+    tecnico = models.ForeignKey(User, models.DO_NOTHING)
+    radiologia = models.ForeignKey(Radiologia, models.DO_NOTHING)
+
+    class Meta:
+        db_table = 'ENTREGA_TURNO'
+
 
 class Servicio(models.Model):
     codigo = models.CharField(max_length=10)
     servicio = models.CharField(max_length=255, blank=True, null=True)
     dosismgy = models.ForeignKey('Dosismgy', models.DO_NOTHING)
     insumo = models.BooleanField(default=0)
+    lateralidad = models.BooleanField(default=0)
 
 
     class Meta:
         db_table = 'SERVICIO'
-
 
 class Servicioeco(models.Model):
     codigo = models.CharField(max_length=10)
@@ -154,6 +188,7 @@ class Servicioeco(models.Model):
 class Serviciopaciente(models.Model):
     servicio = models.ForeignKey('Servicio', models.DO_NOTHING)
     persona = models.ForeignKey('Persona', models.DO_NOTHING)
+    lateralidad = models.ForeignKey('Lateralidad', models.DO_NOTHING)
 
     class Meta:
         db_table = 'SERVICIOPACIENTE'

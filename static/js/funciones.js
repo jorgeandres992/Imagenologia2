@@ -35,6 +35,7 @@ function verificacion_campos_requeridos(tipopaciente, codigo) {
 }
 $(window).ready(function(){
     $("#insumo").hide();
+    $("#lateralidad").hide();
     $("#find").click(function() {
         $.ajax({
                 url: "/buscar/",
@@ -88,6 +89,12 @@ $(window).ready(function(){
                     else {
                         $("#insumo").hide()
                     }
+                    if (data.lateralidad == false) {
+                        $("#lateralidad").show()
+                    }
+                    else {
+                        $("#lateralidad").hide()
+                    }
                 })
                 .fail(function () {
                     swal({
@@ -119,6 +126,13 @@ $(window).ready(function(){
                     else {
                         $("#insumo").hide()
                     }
+                    if (data.lateralidad == true) {
+                        $("#lateralidad").show()
+                    }
+                    else {
+                        $("#lateralidad").hide()
+                    }
+
                 })
                 .fail(function () {
                     var error = "Favor seleccione el tipo de paciente primero ";
@@ -229,8 +243,14 @@ $(window).ready(function(){
     $("#respuesta_lectura").delay(5000).slideUp(500, function () {
             $(this).hide(3000);
     });
-    $('#imprimir').click(function(){
-        $("#resp-success").hide()
+    $('#imprimiretiqueta').click( function(){
+            $('#respost').hide(3000);
+            window.open('/generar_pdf', '_blank');
+    });
+    $('#numid').focusin( function (){
+        $('#respost').delay().slideUp(500, function () {
+            $(this).hide();
+        })
     });
     $('#button').click( function(){
         if ($('#consecutivo').val() == ''){
