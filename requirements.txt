@@ -4,13 +4,13 @@ cffi
 chardet
 colorama
 Django==1.9.6
-dj-static
+dj-static==0.0.6
 django-tinymce
 html5lib
 httplib2
 lxml
 Pillow
-static==0.0.6
+static
 psycopg2
 requests
 tinycss
