@@ -75,8 +75,6 @@ WSGI_APPLICATION = 'imagenologia.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/1.9/ref/settings/#databases
-import urlparse
-db_url = urlparse.urlparse(os.environ.get('OPENSHIFT_MYSQL_DB_URL'))
 
 DATABASES = {
     'default': {
