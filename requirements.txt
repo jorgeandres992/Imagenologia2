@@ -3,10 +3,6 @@ CairoSVG
 cffi
 chardet
 colorama
-cssselect
-debtagshw
-defer
-dirspec
 Django==1.9.6
 dj-static
 django-tinymce
@@ -15,7 +11,6 @@ httplib2
 lxml
 Pillow
 requests
-six
 tinycss
 virtualenv
 WeasyPrint
