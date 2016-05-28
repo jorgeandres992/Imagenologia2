@@ -79,9 +79,9 @@ WSGI_APPLICATION = 'imagenologia.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'Imagenologiadb',
-        'USER': 'root',
-        'PASSWORD': 'root',
+        'NAME': 'imagenologia',
+        'USER': 'adminYMucCWt',
+        'PASSWORD': 'jpJV9EqkXg7y',
         #'ENGINE': 'django.db.backends.sqlite3',
         #'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
