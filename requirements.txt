@@ -10,7 +10,7 @@ html5lib
 httplib2
 lxml
 Pillow
-static
+static==0.0.6
 psycopg2
 requests
 tinycss
