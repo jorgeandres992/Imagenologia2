@@ -15,6 +15,7 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "imagenologia.settings")
 application = get_wsgi_application()
 
 """
+#!/usr/bin/python
 
 import os, sys
 
