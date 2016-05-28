@@ -5,6 +5,8 @@ chardet
 colorama
 Django==1.9.6
 dj-static==0.0.6
+gunicorn==18.0
+dj-database-url
 django-tinymce
 html5lib
 httplib2
