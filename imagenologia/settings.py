@@ -80,7 +80,7 @@ db_url = urlparse.urlparse(os.environ.get('OPENSHIFT_MYSQL_DB_URL'))
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'd8eo0c43vbsiia',
         'USER': 'yzzyvlqsdmgqvv',
         'PASSWORD': 'B6V32jrEgIw3S58GbZyWxyvWUi',
