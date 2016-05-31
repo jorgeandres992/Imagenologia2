@@ -126,7 +126,7 @@
                         </ul>
                     </li>
 
-
+                    {% if user.groups.all.0.id == 1 %}
                         <li class="manager {% block administracion %}{% endblock %}"s>
                             <a href="javascript:;" data-toggle="collapse" data-target="#admin"><i class="fa fa-fw fa-cogs"></i> Administración <i class="fa fa-fw fa-caret-down"></i></a>
                             <ul id="admin" class="collapse">
@@ -135,7 +135,7 @@
                                 </li>
                             </ul>
                         </li>
-
+                    {% endif %}
                 </ul>
             </div>
             <!-- /.navbar-collapse -->

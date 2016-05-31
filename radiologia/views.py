@@ -187,12 +187,13 @@ def especialista(request):
 
 @login_required(login_url='/')
 def usuarios(request):
-
+    if request.user.groups.filter(id = 1).exists():
         perfil = Group.objects.all()
         tipoid = Tipoid.objects.all()
         tipopaciente = Tipopaciente.objects.all()
         return render_to_response('administracion/usuarios.html', {'perfil':perfil,'tipoid':tipoid,'tipopaciente':tipopaciente}, context_instance = RequestContext(request))
-
+    else:
+        return HttpResponseRedirect('/menu')
 
 @login_required(login_url="/")
 def logout(request):
